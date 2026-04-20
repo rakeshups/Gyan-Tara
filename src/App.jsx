@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
 // ════════════════════════════════════════════
-//  GROQ API KEY — Vercel Environment Variable
+//  API CONFIG — Vercel Serverless Function
 // ════════════════════════════════════════════
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY;
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // ════════════════════════════════════════════
 //  SUBJECTS DATA
