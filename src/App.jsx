@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
 // ════════════════════════════════════════════
-//  ANTHROPIC API KEY — यहाँ अपनी key डालें
+//  GROQ API KEY — Vercel Environment Variable
 // ════════════════════════════════════════════
-const ANTHROPIC_API_KEY = "YOUR_ANTHROPIC_API_KEY_HERE";
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY;
 
 // ════════════════════════════════════════════
 //  SUBJECTS DATA
@@ -327,18 +327,23 @@ ${lesson ? `Current lesson: ${lesson.name}` : "Help the child learn anything the
     setIsLoading(true);
     const newHistory = [...history, { role: "user", content: userMsg }];
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+        },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "llama3-8b-8192",
           max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: newHistory.slice(-10),
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...newHistory.slice(-10),
+          ],
         }),
       });
       const data = await res.json();
-      const reply = data.content?.map((b) => b.text || "").join("\n") || "Sorry, try again! 🙏";
+      const reply = data.choices?.[0]?.message?.content || "Sorry, try again! 🙏";
       setMessages((prev) => [...prev, { role: "bot", text: reply }]);
       setChatHistory([...newHistory, { role: "assistant", content: reply }]);
       onAddPoints(10);
