@@ -328,28 +328,17 @@ ${lesson ? `Current lesson: ${lesson.name}` : "Help the child learn anything the
     setIsLoading(true);
     const newHistory = [...history, { role: "user", content: userMsg }];
     try {
-      const res = await fetch(GROQ_API_URL, {
+      const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
-          max_tokens: 1000,
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            ...newHistory.slice(-10),
-          ],
+          system: SYSTEM_PROMPT,
+          messages: newHistory.slice(-10),
         }),
       });
-      if (!res.ok) {
-        const err = await res.json();
-        console.error("Groq error:", err);
-        throw new Error("API error");
-      }
+      if (!res.ok) throw new Error("API error");
       const data = await res.json();
-      const reply = data.choices?.[0]?.message?.content || "Sorry, try again! 🙏";
+      const reply = data.reply || "Sorry, try again! 🙏";
       setMessages((prev) => [...prev, { role: "bot", text: reply }]);
       setChatHistory([...newHistory, { role: "assistant", content: reply }]);
       onAddPoints(10);
