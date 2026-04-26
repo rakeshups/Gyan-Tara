@@ -1,4 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
+
+// ══════════════════════════════════════════════
+// LANGUAGE CONTEXT
+// ══════════════════════════════════════════════
+const LangContext = createContext({ lang: "en", setLang: () => {} });
+const useLang = () => useContext(LangContext);
+
+// Translation helper
+const t = (enText, npText, lang) => lang === "np" ? npText : enText;
 
 // ══════════════════════════════════════════════
 // GAME DATA - 10+ LEVELS PER SUBJECT
@@ -264,6 +273,7 @@ export default function App() {
   const [showReward, setShowReward] = useState(null); // {xp, message}
   const [tab, setTab] = useState("home");
   const [streakDays, setStreakDays] = useState(7);
+  const [lang, setLang] = useState("en"); // "en" | "np"
 
   const addXP = useCallback((amount) => {
     setTotalXP(p => p + amount);
@@ -292,6 +302,7 @@ export default function App() {
   const xpProgress = ((totalXP % 200) / 200) * 100;
 
   return (
+    <LangContext.Provider value={{ lang, setLang }}>
     <div style={{ minHeight: "100vh", background: "#0F0F1E", fontFamily: "'Nunito',sans-serif", color: "#fff", maxWidth: 480, margin: "0 auto", position: "relative", paddingBottom: 76, overflow: "hidden" }}>
       <style>{CSS}</style>
 
@@ -322,16 +333,19 @@ export default function App() {
       {/* BOTTOM NAV */}
       <BottomNav activeTab={tab} onChange={handleTabChange} />
     </div>
+    </LangContext.Provider>
   );
 }
 
 // ══════════════════════════════════════════════
-// TOP BAR
+// TOP BAR (with Language Toggle)
 // ══════════════════════════════════════════════
 function TopBar({ totalXP, playerLevel, xpProgress, xpForNextLevel, streakDays }) {
+  const { lang, setLang } = useLang();
   return (
     <div style={{ background: "linear-gradient(180deg,#1A1A3E 0%,#0F0F1E 100%)", padding: "12px 16px 10px", position: "sticky", top: 0, zIndex: 100, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,#FFB800,#FF6B6B)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: "2px solid rgba(255,255,255,0.2)" }} className="floating">🌟</div>
           <div>
@@ -339,7 +353,8 @@ function TopBar({ totalXP, playerLevel, xpProgress, xpForNextLevel, streakDays }
             <div style={{ fontSize: 9, color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>ज्ञान तारा • Learn & Grow</div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        {/* Right side: streak + xp + LANGUAGE TOGGLE */}
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           <div style={{ background: "rgba(255,184,0,0.15)", border: "1px solid rgba(255,184,0,0.4)", borderRadius: 20, padding: "4px 10px", display: "flex", alignItems: "center", gap: 4 }}>
             <span style={{ fontSize: 12 }}>🔥</span>
             <span style={{ fontSize: 11, fontWeight: 800, color: "#FFB800" }}>{streakDays}d</span>
@@ -348,6 +363,20 @@ function TopBar({ totalXP, playerLevel, xpProgress, xpForNextLevel, streakDays }
             <span style={{ fontSize: 12 }}>⭐</span>
             <span style={{ fontSize: 11, fontWeight: 800, color: "#FFB800" }}>{totalXP} XP</span>
           </div>
+          {/* Language Toggle */}
+          <button
+            onClick={() => setLang(lang === "en" ? "np" : "en")}
+            style={{
+              background: lang === "np" ? "linear-gradient(135deg,#FF6B6B,#FFB800)" : "linear-gradient(135deg,#8B5CF6,#00AEEF)",
+              border: "none", borderRadius: 20, padding: "4px 10px",
+              display: "flex", alignItems: "center", gap: 4,
+              cursor: "pointer", transition: "all 0.25s", boxShadow: "0 2px 10px rgba(0,0,0,0.3)"
+            }}
+            title="Switch Language / भाषा बदल्नुस्"
+          >
+            <span style={{ fontSize: 13 }}>{lang === "en" ? "🇳🇵" : "🇬🇧"}</span>
+            <span style={{ fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>{lang === "en" ? "NP" : "EN"}</span>
+          </button>
         </div>
       </div>
       {/* XP bar */}
@@ -363,55 +392,89 @@ function TopBar({ totalXP, playerLevel, xpProgress, xpForNextLevel, streakDays }
 }
 
 // ══════════════════════════════════════════════
-// HOME VIEW
+// HOME VIEW (Redesigned + Bilingual)
 // ══════════════════════════════════════════════
 function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSubject, onOpenTutor }) {
+  const { lang } = useLang();
   const totalCompleted = Object.values(completedLevels).reduce((a, arr) => a + arr.length, 0);
-  
+
+  const greetings = lang === "np"
+    ? ["नमस्ते च्याम्पियन! 👋", "आज के सिक्ने? 🌟", "तयार हुनुहुन्छ? ⚔️"]
+    : ["Hello Champion! 👋", "Ready to Learn? 🌟", "Let's Play! ⚔️"];
+  const greeting = greetings[Math.floor(Date.now() / 10000) % 3];
+
   return (
     <div className="slide-up">
-      {/* Hero Banner */}
-      <div style={{ background: "linear-gradient(135deg,#1A1A3E 0%,#0F3460 60%,#1A1A3E 100%)", padding: "20px 16px 24px", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: -40, right: -40, width: 160, height: 160, borderRadius: "50%", background: "rgba(255,184,0,0.06)" }} />
-        <div style={{ position: "absolute", bottom: -30, left: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(139,92,246,0.08)" }} />
+      {/* ── Hero Banner ── */}
+      <div style={{ background: "linear-gradient(135deg,#1A1A3E 0%,#0F3460 60%,#16213E 100%)", padding: "22px 16px 28px", position: "relative", overflow: "hidden" }}>
+        {/* decorative circles */}
+        <div style={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", background: "rgba(255,184,0,0.06)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: -40, left: -40, width: 140, height: 140, borderRadius: "50%", background: "rgba(139,92,246,0.08)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: 20, left: "50%", width: 80, height: 80, borderRadius: "50%", background: "rgba(0,174,239,0.05)", pointerEvents: "none" }} />
+
         <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>🇳🇵 नमस्ते / Hello Champion!</div>
-          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 24, lineHeight: 1.2, marginBottom: 6 }}>
-            Ready to Level Up? <span style={{ fontSize: 26 }}>⚔️</span>
+          {/* Flag + greeting */}
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+            <span>🇳🇵</span>
+            <span>{lang === "np" ? "नमस्ते / Hello" : "नमस्ते / Hello"}</span>
           </div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontWeight: 600, marginBottom: 16 }}>आज के खेल्ने? / What to play today?</div>
-          <div style={{ display: "flex", gap: 8 }}>
-            {[{ icon: "🔥", val: `${streakDays} Days`, label: "Streak" }, { icon: "⭐", val: `${totalXP} XP`, label: "Total XP" }, { icon: "🎯", val: `${totalCompleted}`, label: "Levels Done" }, { icon: "👑", val: `Lv ${playerLevel}`, label: "Player Level" }].map(s => (
-              <div key={s.label} style={{ background: "rgba(255,255,255,0.08)", borderRadius: 12, padding: "8px 10px", textAlign: "center", flex: 1, border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ fontSize: 14 }}>{s.icon}</div>
-                <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 12, color: "#FFB800", marginTop: 1 }}>{s.val}</div>
-                <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}>{s.label}</div>
+
+          {/* Big headline */}
+          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 26, lineHeight: 1.2, marginBottom: 6 }}>
+            {lang === "np" ? "आज के सिक्ने?" : "Ready to Level Up?"} <span style={{ fontSize: 28 }}>🚀</span>
+          </div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontWeight: 600, marginBottom: 18 }}>
+            {lang === "np" ? "खेलेर सिक्नुस् • मजाले पढ्नुस्!" : "Learn by playing • Have fun growing!"}
+          </div>
+
+          {/* Stats row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
+            {[
+              { icon: "🔥", val: `${streakDays}`, label: lang === "np" ? "दिन" : "Days", sub: lang === "np" ? "स्ट्रीक" : "Streak" },
+              { icon: "⭐", val: `${totalXP}`, label: "XP", sub: lang === "np" ? "कमाएको" : "Earned" },
+              { icon: "🎯", val: `${totalCompleted}`, label: lang === "np" ? "तह" : "Levels", sub: lang === "np" ? "सकियो" : "Done" },
+              { icon: "👑", val: `${playerLevel}`, label: lang === "np" ? "लेभल" : "Level", sub: lang === "np" ? "खेलाडी" : "Player" },
+            ].map(s => (
+              <div key={s.label} style={{ background: "rgba(255,255,255,0.08)", borderRadius: 14, padding: "10px 6px", textAlign: "center", border: "1px solid rgba(255,255,255,0.1)" }}>
+                <div style={{ fontSize: 16, marginBottom: 2 }}>{s.icon}</div>
+                <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#FFB800" }}>{s.val}</div>
+                <div style={{ fontSize: 8, color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>{s.label}</div>
+                <div style={{ fontSize: 7, color: "rgba(255,255,255,0.3)", fontWeight: 600 }}>{s.sub}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Daily Challenge */}
-      <div style={{ padding: "14px 16px 6px", fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
-        <span>⚡</span> Daily Challenge / आजको चुनौती
+      {/* ── Daily Challenge ── */}
+      <div style={{ padding: "16px 16px 6px", fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+        <span>⚡</span>
+        <span>{lang === "np" ? "आजको चुनौती" : "Daily Challenge"}</span>
+        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginLeft: 2 }}>{lang === "np" ? "• आजको मिशन" : "• Today's Mission"}</span>
       </div>
-      <div onClick={() => onOpenSubject("comm")} style={{ margin: "0 16px 16px", background: "linear-gradient(135deg,#FF6B6B,#8B5CF6)", borderRadius: 18, padding: 16, cursor: "pointer", display: "flex", alignItems: "center", gap: 14, boxShadow: "0 8px 30px rgba(255,107,107,0.3)" }} className="card-hover btn-bounce">
-        <div style={{ width: 52, height: 52, borderRadius: 14, background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }} className="floating">🎤</div>
+      <div onClick={() => onOpenSubject("comm")} style={{ margin: "0 16px 18px", background: "linear-gradient(135deg,#FF6B6B,#8B5CF6)", borderRadius: 20, padding: "16px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, boxShadow: "0 8px 30px rgba(255,107,107,0.3)" }} className="card-hover btn-bounce">
+        <div style={{ width: 54, height: 54, borderRadius: 16, background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, flexShrink: 0 }} className="floating">🎤</div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.7)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 3 }}>Daily Mission • आजको मिशन</div>
-          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, marginBottom: 3 }}>Speak Up Challenge! 🗣️</div>
+          <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.8)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 3 }}>
+            {lang === "np" ? "आजको मिशन" : "Daily Mission"}
+          </div>
+          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 17, marginBottom: 3 }}>
+            {lang === "np" ? "साहसले बोल्नुस्! 🗣️" : "Speak Up Challenge! 🗣️"}
+          </div>
           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
             <span style={{ background: "rgba(255,255,255,0.2)", borderRadius: 10, padding: "2px 8px", fontSize: 10, fontWeight: 700 }}>+50 XP</span>
-            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>5 minutes • कमाउनुस्!</span>
+            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>
+              {lang === "np" ? "५ मिनेट • अभी खेल्नुस्!" : "5 minutes • Play now!"}
+            </span>
           </div>
         </div>
-        <span style={{ fontSize: 20, opacity: 0.6 }}>›</span>
+        <span style={{ fontSize: 22, opacity: 0.6 }}>›</span>
       </div>
 
-      {/* Subject Cards - 2 columns */}
-      <div style={{ padding: "0 16px 6px", fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#fff" }}>
-        🎮 Choose Your Adventure / विषय छान्नुस्
+      {/* ── Subject Cards ── */}
+      <div style={{ padding: "0 16px 8px", fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+        <span>🎮</span>
+        <span>{lang === "np" ? "विषय छान्नुस्" : "Choose Your Adventure"}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "8px 16px 16px" }}>
         {Object.entries(LEVELS_DATA).map(([key, s]) => {
@@ -419,30 +482,39 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
           const total = s.levels.length;
           const pct = Math.round((done / total) * 100);
           return (
-            <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))", borderRadius: 18, padding: 14, cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden" }} className="card-hover btn-bounce">
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: s.gradient, borderRadius: "18px 18px 0 0" }} />
-              <div style={{ fontSize: 30, marginBottom: 8 }} className="floating">{s.emoji}</div>
-              <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, lineHeight: 1.2, marginBottom: 3 }}>{s.title}</div>
-              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.5)", fontWeight: 700, marginBottom: 10 }}>{s.titleNp}</div>
+            <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))", borderRadius: 20, padding: 14, cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden", minHeight: 120 }} className="card-hover btn-bounce">
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: s.gradient, borderRadius: "20px 20px 0 0" }} />
+              <div style={{ fontSize: 32, marginBottom: 8 }} className="floating">{s.emoji}</div>
+              <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, lineHeight: 1.2, marginBottom: 2 }}>
+                {lang === "np" ? s.titleNp : s.title}
+              </div>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 700, marginBottom: 10 }}>
+                {lang === "np" ? s.title : s.titleNp}
+              </div>
+              {/* Progress */}
               <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 10, height: 5, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${pct}%`, background: s.gradient, borderRadius: 10, transition: "width 0.6s" }} />
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}>{done}/{total} levels</span>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}>{pct}%</span>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}>
+                  {done}/{total} {lang === "np" ? "तह" : "levels"}
+                </span>
+                <span style={{ fontSize: 9, fontWeight: 800, color: pct === 100 ? "#4ade80" : "rgba(255,255,255,0.4)" }}>{pct}%</span>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* AI Tutor Button */}
-      <div style={{ padding: "0 16px 20px" }}>
-        <div onClick={onOpenTutor} style={{ background: "linear-gradient(135deg,rgba(139,92,246,0.2),rgba(0,174,239,0.2))", border: "1px solid rgba(139,92,246,0.4)", borderRadius: 18, padding: "14px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }} className="card-hover btn-bounce">
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "linear-gradient(135deg,#8B5CF6,#00AEEF)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }} className="pulsing">🤖</div>
+      {/* ── AI Tutor Button ── */}
+      <div style={{ padding: "0 16px 24px" }}>
+        <div onClick={onOpenTutor} style={{ background: "linear-gradient(135deg,rgba(139,92,246,0.2),rgba(0,174,239,0.2))", border: "1px solid rgba(139,92,246,0.4)", borderRadius: 20, padding: "16px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }} className="card-hover btn-bounce">
+          <div style={{ width: 50, height: 50, borderRadius: "50%", background: "linear-gradient(135deg,#8B5CF6,#00AEEF)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }} className="pulsing">🤖</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15, marginBottom: 2 }}>Gyan Guru AI Tutor</div>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>Ask me anything! • कुनै पनि सोध्नुस् 🔒 Safe for kids</div>
+            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15, marginBottom: 3 }}>Gyan Guru AI Tutor</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>
+              {lang === "np" ? "कुनै पनि सोध्नुस्! 🔒 बच्चाहरूको लागि सुरक्षित" : "Ask me anything! 🔒 Safe for kids"}
+            </div>
           </div>
           <span style={{ fontSize: 20, opacity: 0.5 }}>›</span>
         </div>
@@ -455,9 +527,12 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
 // SUBJECTS VIEW
 // ══════════════════════════════════════════════
 function SubjectsView({ onOpenSubject, completedLevels }) {
+  const { lang } = useLang();
   return (
     <div className="slide-up" style={{ padding: 14 }}>
-      <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 18, marginBottom: 14, textAlign: "center" }}>🎮 All Adventures / सबै यात्राहरू</div>
+      <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 18, marginBottom: 14, textAlign: "center" }}>
+        🎮 {lang === "np" ? "सबै यात्राहरू" : "All Adventures"}
+      </div>
       {Object.entries(LEVELS_DATA).map(([key, s]) => {
         const done = (completedLevels[key] || []).length;
         const total = s.levels.length;
@@ -465,8 +540,10 @@ function SubjectsView({ onOpenSubject, completedLevels }) {
           <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03))", borderRadius: 18, padding: 14, marginBottom: 12, cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: 14 }} className="card-hover btn-bounce">
             <div style={{ width: 52, height: 52, borderRadius: 14, background: s.gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{s.emoji}</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15, marginBottom: 2 }}>{s.title}</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", fontWeight: 700, marginBottom: 6 }}>{done}/{total} levels • {s.titleNp}</div>
+              <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15, marginBottom: 2 }}>{lang === "np" ? s.titleNp : s.title}</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", fontWeight: 700, marginBottom: 6 }}>
+                {done}/{total} {lang === "np" ? "तह" : "levels"} • {lang === "np" ? s.title : s.titleNp}
+              </div>
               <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 8, height: 6, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${Math.round((done/total)*100)}%`, background: s.gradient, transition: "width 0.6s" }} />
               </div>
@@ -484,25 +561,32 @@ function SubjectsView({ onOpenSubject, completedLevels }) {
 // ══════════════════════════════════════════════
 function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
   const s = LEVELS_DATA[subjectKey];
+  const { lang } = useLang();
   
   return (
     <div className="slide-up">
       {/* Header */}
       <div style={{ background: s.gradient, padding: "14px 16px 20px", borderRadius: "0 0 28px 28px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
-        <button onClick={onBack} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 12, padding: "6px 14px", cursor: "pointer", fontWeight: 700, fontSize: 12, fontFamily: "'Nunito',sans-serif", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>← Back</button>
+        <button onClick={onBack} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 12, padding: "6px 14px", cursor: "pointer", fontWeight: 700, fontSize: 12, fontFamily: "'Nunito',sans-serif", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
+          ← {lang === "np" ? "पछाडि" : "Back"}
+        </button>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ fontSize: 40 }} className="floating">{s.emoji}</div>
           <div>
-            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 22, color: "#fff" }}>{s.title}</div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 700 }}>{s.titleNp} • {completedLevels.length}/{s.levels.length} levels done</div>
+            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 22, color: "#fff" }}>{lang === "np" ? s.titleNp : s.title}</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 700 }}>
+              {lang === "np" ? s.title : s.titleNp} • {completedLevels.length}/{s.levels.length} {lang === "np" ? "तह सकियो" : "levels done"}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Level Map */}
       <div style={{ padding: "16px 16px 24px" }}>
-        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 14, marginBottom: 14, color: "rgba(255,255,255,0.7)", textAlign: "center" }}>🗺️ Your Adventure Map / तपाईंको यात्रा नक्शा</div>
+        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 14, marginBottom: 14, color: "rgba(255,255,255,0.7)", textAlign: "center" }}>
+          🗺️ {lang === "np" ? "तपाईंको यात्रा नक्शा" : "Your Adventure Map"}
+        </div>
         {s.levels.map((level, i) => {
           const isDone = completedLevels.includes(level.id);
           const isUnlocked = level.id === 1 || completedLevels.includes(level.id - 1);
@@ -537,14 +621,18 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
 
                 {/* Level info */}
                 <div style={{ flex: 1 }}>
-                  {level.isBoss && <div style={{ fontSize: 9, fontWeight: 800, color: "#FFB800", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 2 }}>⚔️ BOSS LEVEL</div>}
+                  {level.isBoss && <div style={{ fontSize: 9, fontWeight: 800, color: "#FFB800", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 2 }}>⚔️ {lang === "np" ? "बस लेभल" : "BOSS LEVEL"}</div>}
                   <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: level.isBoss ? 15 : 13, color: isLocked ? "rgba(255,255,255,0.3)" : "#fff", marginBottom: 2 }}>
-                    {level.name}
+                    {lang === "np" ? level.nameNp : level.name}
                   </div>
-                  <div style={{ fontSize: 10, color: isLocked ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)", fontWeight: 600, marginBottom: 4 }}>{level.nameNp}</div>
+                  <div style={{ fontSize: 10, color: isLocked ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)", fontWeight: 600, marginBottom: 4 }}>
+                    {lang === "np" ? level.name : level.nameNp}
+                  </div>
                   {!isLocked && (
                     <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                      <span style={{ fontSize: 9, color: isDone ? "#4ade80" : "#FFB800", fontWeight: 800 }}>{isDone ? "✅ Done!" : `+${level.xp} XP`}</span>
+                      <span style={{ fontSize: 9, color: isDone ? "#4ade80" : "#FFB800", fontWeight: 800 }}>
+                        {isDone ? `✅ ${lang === "np" ? "सकियो!" : "Done!"}` : `+${level.xp} XP`}
+                      </span>
                       <span style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>•</span>
                       <span style={{ fontSize: 8, color: "rgba(255,255,255,0.35)", fontWeight: 700 }}>
                         {level.type === "boss" ? "⚔️ Boss Fight" : level.type === "quiz" ? "❓ Quiz" : level.type === "challenge" ? "🎯 Challenge" : "📖 Lesson"}
@@ -561,7 +649,7 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
                 )}
                 {!isLocked && !isDone && (
                   <div style={{ background: s.gradient, borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 800, color: "#fff", whiteSpace: "nowrap" }}>
-                    {level.isBoss ? "⚔️ Fight!" : "▶ Play"}
+                    {level.isBoss ? `⚔️ ${lang === "np" ? "लड!" : "Fight!"}` : `▶ ${lang === "np" ? "खेल" : "Play"}`}
                   </div>
                 )}
               </div>
@@ -578,6 +666,7 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
 // ══════════════════════════════════════════════
 function GameLevelView({ subjectKey, level, onBack, onComplete }) {
   const s = LEVELS_DATA[subjectKey];
+  const { lang } = useLang();
   const questions = MINI_QUIZZES[subjectKey] || MINI_QUIZZES.comm;
   const [phase, setPhase] = useState("intro"); // intro | question | result | complete
   const [qIdx, setQIdx] = useState(0);
@@ -622,10 +711,14 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
         <div style={{ background: s.gradient, borderRadius: 28, padding: "28px 20px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
           <div style={{ fontSize: 64, marginBottom: 12 }} className="floating">{level.icon}</div>
-          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 24, color: "#fff", marginBottom: 6 }}>{level.name}</div>
+          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 24, color: "#fff", marginBottom: 6 }}>{lang === "np" ? level.nameNp : level.name}</div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", fontWeight: 600, marginBottom: 16 }}>{level.description}</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
-            {[{ icon: "❤️", val: "3 Lives", label: "lives" }, { icon: "⭐", val: `${level.xp} XP`, label: "max xp" }, { icon: "❓", val: "4 Questions", label: "questions" }].map(s => (
+            {[
+              { icon: "❤️", val: lang === "np" ? "३ जीवन" : "3 Lives", label: "lives" },
+              { icon: "⭐", val: `${level.xp} XP`, label: "max xp" },
+              { icon: "❓", val: lang === "np" ? "४ सवाल" : "4 Questions", label: "questions" }
+            ].map(s => (
               <div key={s.label} style={{ background: "rgba(255,255,255,0.15)", borderRadius: 12, padding: "8px 12px", textAlign: "center" }}>
                 <div style={{ fontSize: 16 }}>{s.icon}</div>
                 <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 12, color: "#fff" }}>{s.val}</div>
@@ -635,15 +728,17 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
         </div>
         {level.isBoss && (
           <div style={{ background: "rgba(255,184,0,0.1)", border: "2px solid rgba(255,184,0,0.4)", borderRadius: 16, padding: 14, marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, color: "#FFB800", marginBottom: 4 }}>⚔️ BOSS BATTLE!</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>This is a tough challenge! Answer correctly to defeat the boss! 💪</div>
+            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, color: "#FFB800", marginBottom: 4 }}>⚔️ {lang === "np" ? "बस लडाई!" : "BOSS BATTLE!"}</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>
+              {lang === "np" ? "यो कठिन चुनौती हो! सही जवाफ दिएर बस जित्नुस्! 💪" : "This is a tough challenge! Answer correctly to defeat the boss! 💪"}
+            </div>
           </div>
         )}
         <button onClick={() => setPhase("question")} style={{ background: s.gradient, color: "#fff", border: "none", borderRadius: 20, padding: "14px 36px", fontFamily: "'Fredoka One',cursive", fontSize: 18, cursor: "pointer", boxShadow: `0 8px 25px ${s.bgGlow}`, width: "100%" }} className="btn-bounce">
-          {level.isBoss ? "⚔️ Start Boss Battle!" : "▶ Start Level!"}
+          {level.isBoss ? `⚔️ ${lang === "np" ? "बस लडाई सुरु!" : "Start Boss Battle!"}` : `▶ ${lang === "np" ? "तह सुरु!" : "Start Level!"}`}
         </button>
         <button onClick={onBack} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)", borderRadius: 16, padding: "10px 24px", fontWeight: 700, fontSize: 12, cursor: "pointer", fontFamily: "'Nunito',sans-serif", marginTop: 10, width: "100%" }}>
-          ← Back to Map
+          ← {lang === "np" ? "नक्शामा फर्कनुस्" : "Back to Map"}
         </button>
       </div>
     );
@@ -657,22 +752,28 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
         <div style={{ background: pct >= 75 ? "linear-gradient(135deg,#3DBF6E,#00AEEF)" : "linear-gradient(135deg,#FFB800,#FF8C00)", borderRadius: 28, padding: "28px 20px", marginBottom: 20 }}>
           <div style={{ fontSize: 56, marginBottom: 12 }}>{pct >= 100 ? "🏆" : pct >= 75 ? "⭐" : "💪"}</div>
           <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 26, color: "#fff", marginBottom: 4 }}>
-            {pct >= 100 ? "PERFECT! 🎉" : pct >= 75 ? "GREAT JOB! 🌟" : "KEEP GOING! 💪"}
+            {pct >= 100
+              ? (lang === "np" ? "एकदम सही! 🎉" : "PERFECT! 🎉")
+              : pct >= 75
+              ? (lang === "np" ? "शाबास! 🌟" : "GREAT JOB! 🌟")
+              : (lang === "np" ? "जारी राख्नुस्! 💪" : "KEEP GOING! 💪")}
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 4, marginBottom: 12 }}>
             {[1,2,3].map(n => <span key={n} style={{ fontSize: 28, opacity: n <= stars ? 1 : 0.3 }}>⭐</span>)}
           </div>
-          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 20, color: "#fff" }}>{score}/4 correct!</div>
+          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 20, color: "#fff" }}>
+            {score}/4 {lang === "np" ? "सही!" : "correct!"}
+          </div>
         </div>
         <div style={{ background: "rgba(255,184,0,0.15)", border: "2px solid rgba(255,184,0,0.4)", borderRadius: 20, padding: "12px 20px", marginBottom: 20, display: "inline-block" }}>
           <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 22, color: "#FFB800" }}>+{earnedXP > 0 ? earnedXP : 10} XP Earned! ⭐</div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <button onClick={() => onComplete(earnedXP > 0 ? earnedXP : 10)} style={{ flex: 1, background: s.gradient, color: "#fff", border: "none", borderRadius: 16, padding: "14px", fontFamily: "'Fredoka One',cursive", fontSize: 16, cursor: "pointer" }} className="btn-bounce">
-            ✅ Claim Reward!
+            ✅ {lang === "np" ? "इनाम लिनुस्!" : "Claim Reward!"}
           </button>
           <button onClick={() => { setPhase("intro"); setQIdx(0); setScore(0); setHearts(3); setCombo(0); setChosen(null); }} style={{ flex: 1, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", borderRadius: 16, padding: "14px", fontFamily: "'Fredoka One',cursive", fontSize: 16, cursor: "pointer" }}>
-            🔄 Try Again
+            🔄 {lang === "np" ? "फेरि प्रयास" : "Try Again"}
           </button>
         </div>
       </div>
@@ -852,6 +953,7 @@ function SafeAITutorView({ onBack }) {
 // PROFILE VIEW
 // ══════════════════════════════════════════════
 function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
+  const { lang } = useLang();
   const totalDone = Object.values(completedLevels).reduce((a, arr) => a + arr.length, 0);
   const unlockedBadges = BADGES.filter(b => b.condition(totalXP));
 
@@ -863,7 +965,11 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
         <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 22, marginBottom: 2 }}>Aarav & Priya</div>
         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", fontWeight: 700, marginBottom: 14 }}>Grade 4–5 • Nepal 🇳🇵</div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
-          {[{ icon: "🔥", val: `${streakDays} Day Streak`, col: "#FF6B6B" }, { icon: "⭐", val: `${totalXP} XP`, col: "#FFB800" }, { icon: "👑", val: `Level ${playerLevel}`, col: "#8B5CF6" }].map(b => (
+          {[
+            { icon: "🔥", val: `${streakDays} ${lang === "np" ? "दिन स्ट्रीक" : "Day Streak"}`, col: "#FF6B6B" },
+            { icon: "⭐", val: `${totalXP} XP`, col: "#FFB800" },
+            { icon: "👑", val: `${lang === "np" ? "लेभल" : "Level"} ${playerLevel}`, col: "#8B5CF6" }
+          ].map(b => (
             <div key={b.val} style={{ background: "rgba(255,255,255,0.1)", borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 700, color: b.col, border: `1px solid ${b.col}44` }}>
               {b.icon} {b.val}
             </div>
@@ -873,7 +979,11 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, padding: 16 }}>
-        {[{ num: totalDone, label: "Levels Done", icon: "🎮", col: "#FF6B6B" }, { num: `${Math.round((totalDone / 72) * 100)}%`, label: "Complete", icon: "📊", col: "#00AEEF" }, { num: `${totalXP}`, label: "Total XP", icon: "⭐", col: "#FFB800" }].map(s => (
+        {[
+          { num: totalDone, label: lang === "np" ? "तह सकियो" : "Levels Done", icon: "🎮", col: "#FF6B6B" },
+          { num: `${Math.round((totalDone / 72) * 100)}%`, label: lang === "np" ? "पूरा भयो" : "Complete", icon: "📊", col: "#00AEEF" },
+          { num: `${totalXP}`, label: lang === "np" ? "कुल XP" : "Total XP", icon: "⭐", col: "#FFB800" }
+        ].map(s => (
           <div key={s.label} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 16, padding: 14, textAlign: "center", border: "1px solid rgba(255,255,255,0.08)" }}>
             <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
             <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 20, color: s.col }}>{s.num}</div>
@@ -884,7 +994,9 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
 
       {/* Badges */}
       <div style={{ padding: "0 16px 8px" }}>
-        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>🏅 Badges Earned</div>
+        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+          🏅 {lang === "np" ? "ब्याज कमाएको" : "Badges Earned"}
+        </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           {BADGES.map(badge => {
             const unlocked = badge.condition(totalXP);
@@ -900,7 +1012,9 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
 
       {/* Subject Progress */}
       <div style={{ padding: "14px 16px 24px" }}>
-        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, marginBottom: 12 }}>📈 Subject Progress</div>
+        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, marginBottom: 12 }}>
+          📈 {lang === "np" ? "विषय प्रगति" : "Subject Progress"}
+        </div>
         {Object.entries(LEVELS_DATA).map(([key, s]) => {
           const done = (completedLevels[key] || []).length;
           const total = s.levels.length;
@@ -910,7 +1024,7 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 18 }}>{s.emoji}</span>
-                  <span style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, color: "#fff" }}>{s.title}</span>
+                  <span style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, color: "#fff" }}>{lang === "np" ? s.titleNp : s.title}</span>
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)" }}>{done}/{total}</span>
               </div>
@@ -929,11 +1043,12 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
 // BOTTOM NAV
 // ══════════════════════════════════════════════
 function BottomNav({ activeTab, onChange }) {
+  const { lang } = useLang();
   const tabs = [
-    { id: "home", icon: "🏠", label: "Home" },
-    { id: "learn", icon: "🎮", label: "Play" },
-    { id: "tutor", icon: "🤖", label: "AI Tutor" },
-    { id: "profile", icon: "👤", label: "Profile" },
+    { id: "home", icon: "🏠", label: lang === "np" ? "घर" : "Home" },
+    { id: "learn", icon: "🎮", label: lang === "np" ? "खेल" : "Play" },
+    { id: "tutor", icon: "🤖", label: lang === "np" ? "शिक्षक" : "AI Tutor" },
+    { id: "profile", icon: "👤", label: lang === "np" ? "प्रोफाइल" : "Profile" },
   ];
   return (
     <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: "rgba(15,15,30,0.97)", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", zIndex: 100, backdropFilter: "blur(20px)", borderRadius: "24px 24px 0 0" }}>
