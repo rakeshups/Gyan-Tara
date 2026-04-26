@@ -511,7 +511,56 @@ const CSS = `
 
 .level-locked { opacity: 0.45; filter: grayscale(0.7); }
 .level-completed { opacity: 1; }
+
+@keyframes confettiFall {
+  0% { transform: translateY(-10px) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+}
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confettiFall 2.5s ease-in forwards;
+  pointer-events: none;
+  z-index: 998;
+}
+
+@keyframes spinStar { to { transform: rotate(360deg); } }
+.spin-star { animation: spinStar 1s linear infinite; display: inline-block; }
 `;
+
+// ══════════════════════════════════════════════
+// CONFETTI SHOWER COMPONENT
+// ══════════════════════════════════════════════
+function ConfettiShower() {
+  const colors = ["#FFB800","#FF6B6B","#3DBF6E","#00AEEF","#8B5CF6","#F472B6"];
+  const [pieces] = useState(() =>
+    Array.from({length: 35}, (_, i) => ({
+      id: i,
+      color: colors[i % colors.length],
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 0.8}s`,
+      size: `${6 + Math.random() * 8}px`,
+      isCircle: Math.random() > 0.5,
+    }))
+  );
+  return (
+    <>
+      {pieces.map(p => (
+        <div key={p.id} className="confetti-piece" style={{
+          background: p.color,
+          left: p.left,
+          top: "-20px",
+          width: p.size,
+          height: p.size,
+          animationDelay: p.delay,
+          borderRadius: p.isCircle ? "50%" : "2px",
+        }} />
+      ))}
+    </>
+  );
+}
 
 // ══════════════════════════════════════════════
 // MAIN APP
@@ -529,7 +578,7 @@ export default function App() {
 
   const addXP = useCallback((amount) => {
     setTotalXP(p => p + amount);
-    setShowReward({ xp: amount, message: amount >= 150 ? "🏆 BOSS DEFEATED!" : amount >= 100 ? "⭐ AMAZING!" : "🌟 GREAT JOB!" });
+    setShowReward({ xp: amount });
     setTimeout(() => setShowReward(null), 2500);
   }, []);
 
@@ -559,15 +608,26 @@ export default function App() {
       <style>{CSS}</style>
 
       {/* XP Reward Popup */}
-      {showReward && (
-        <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 999, textAlign: "center", pointerEvents: "none" }} className="pop-in">
-          <div style={{ background: "linear-gradient(135deg,#FFB800,#FF6B6B)", borderRadius: 24, padding: "20px 36px", boxShadow: "0 20px 60px rgba(255,184,0,0.5)" }}>
-            <div style={{ fontSize: 48, marginBottom: 4 }}>🎉</div>
-            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 28, color: "#fff" }}>{showReward.message}</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginTop: 4 }}>+{showReward.xp} XP ✨</div>
+      {showReward && (() => {
+        const xp = showReward.xp;
+        const rewardEmoji = xp >= 150 ? "🏆" : xp >= 100 ? "⭐" : xp >= 50 ? "🌟" : "💪";
+        const msgEn = xp >= 150 ? "BOSS DEFEATED!" : xp >= 100 ? "AMAZING!" : xp >= 50 ? "GREAT JOB!" : "KEEP GOING!";
+        const msgNp = xp >= 150 ? "बस जितियो!" : xp >= 100 ? "अद्भुत!" : xp >= 50 ? "शाबास!" : "जारी राख्नुस्!";
+        return (
+          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 999, textAlign: "center", pointerEvents: "none" }} className="pop-in">
+            <div style={{ background: "linear-gradient(135deg,#FFB800,#FF6B6B)", borderRadius: 28, padding: "28px 50px", boxShadow: "0 20px 60px rgba(255,184,0,0.5)" }}>
+              <div style={{ fontSize: 56, marginBottom: 6 }} className="spin-star">{rewardEmoji}</div>
+              <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 28, color: "#fff", marginBottom: 2 }}>
+                {lang === "np" ? msgNp : msgEn}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)", marginBottom: 8 }}>
+                {lang === "np" ? msgEn : msgNp}
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>+{xp} XP ✨</div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* TOP BAR */}
       <TopBar totalXP={totalXP} playerLevel={playerLevel} xpProgress={xpProgress} xpForNextLevel={xpForNextLevel} streakDays={streakDays} />
@@ -698,6 +758,21 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
         </div>
       </div>
 
+      {/* ── Streak Celebration Banner ── */}
+      {streakDays >= 3 && (
+        <div style={{ margin: "0 16px 12px", background: "linear-gradient(135deg,rgba(255,107,107,0.2),rgba(255,184,0,0.2))", border: "2px solid rgba(255,107,107,0.4)", borderRadius: 16, padding: "10px 16px", display: "flex", alignItems: "center", gap: 10 }} className="pulsing">
+          <span style={{ fontSize: 24 }}>🔥</span>
+          <div>
+            <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 14, color: "#FF6B6B" }}>
+              {lang === "np" ? `${streakDays} दिनको स्ट्रीक! 🔥` : `${streakDays} Day Streak! 🔥`}
+            </div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>
+              {lang === "np" ? "तिमी एकदम राम्रो गर्दैछौ!" : "You're on fire! Keep it up!"}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Daily Challenge ── */}
       <div style={{ padding: "16px 16px 6px", fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
         <span>⚡</span>
@@ -734,8 +809,13 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
           const total = s.levels.length;
           const pct = Math.round((done / total) * 100);
           return (
-            <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))", borderRadius: 20, padding: 14, cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden", minHeight: 120 }} className="card-hover btn-bounce">
+            <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))", borderRadius: 20, padding: 14, cursor: "pointer", border: pct === 100 ? "2px solid rgba(255,184,0,0.6)" : "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden", minHeight: 120 }} className="card-hover btn-bounce">
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: s.gradient, borderRadius: "20px 20px 0 0" }} />
+              {pct === 100 && (
+                <div style={{ position: "absolute", top: 10, right: 10, background: "linear-gradient(135deg,#FFB800,#FF6B6B)", borderRadius: 10, padding: "2px 8px", fontSize: 9, fontWeight: 800, color: "#fff", zIndex: 2 }}>
+                  ✅ {lang === "np" ? "पूरा!" : "COMPLETE!"}
+                </div>
+              )}
               <div style={{ fontSize: 32, marginBottom: 8 }} className="floating">{s.emoji}</div>
               <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, lineHeight: 1.2, marginBottom: 2 }}>
                 {lang === "np" ? s.titleNp : s.title}
@@ -743,6 +823,9 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
               <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 700, marginBottom: 10 }}>
                 {lang === "np" ? s.title : s.titleNp}
               </div>
+              {pct === 100 && (
+                <div style={{ fontSize: 14, marginBottom: 6, textAlign: "center" }}>🎉🌟🏆</div>
+              )}
               {/* Progress */}
               <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 10, height: 5, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${pct}%`, background: s.gradient, borderRadius: 10, transition: "width 0.6s" }} />
@@ -1016,8 +1099,19 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
   if (phase === "complete") {
     const pct = Math.round((score / 4) * 100);
     const stars = score >= 4 ? 3 : score >= 3 ? 2 : 1;
+    const [shownStars, setShownStars] = useState(0);
+    useEffect(() => {
+      let count = 0;
+      const interval = setInterval(() => {
+        count++;
+        setShownStars(count);
+        if (count >= stars) clearInterval(interval);
+      }, 400);
+      return () => clearInterval(interval);
+    }, []);
     return (
       <div style={{ padding: 20, textAlign: "center" }} className="pop-in">
+        {score >= 3 && <ConfettiShower />}
         <div style={{ background: pct >= 75 ? "linear-gradient(135deg,#3DBF6E,#00AEEF)" : "linear-gradient(135deg,#FFB800,#FF8C00)", borderRadius: 28, padding: "28px 20px", marginBottom: 20 }}>
           <div style={{ fontSize: 56, marginBottom: 12 }}>{pct >= 100 ? "🏆" : pct >= 75 ? "⭐" : "💪"}</div>
           <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 26, color: "#fff", marginBottom: 4 }}>
@@ -1028,7 +1122,15 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
               : (lang === "np" ? "जारी राख्नुस्! 💪" : "KEEP GOING! 💪")}
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 4, marginBottom: 12 }}>
-            {[1,2,3].map(n => <span key={n} style={{ fontSize: 28, opacity: n <= stars ? 1 : 0.3 }}>⭐</span>)}
+            {[1,2,3].map(n => (
+              <span key={n} style={{
+                fontSize: 28,
+                opacity: n <= shownStars ? 1 : 0.3,
+                transform: n <= shownStars ? "scale(1)" : "scale(0.5)",
+                transition: "transform 0.3s, opacity 0.3s",
+                display: "inline-block",
+              }} className={n <= shownStars ? "pop-in" : ""}>⭐</span>
+            ))}
           </div>
           <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 20, color: "#fff" }}>
             {score}/4 {lang === "np" ? "सही!" : "correct!"}
