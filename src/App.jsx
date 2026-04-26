@@ -718,43 +718,59 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
   return (
     <div className="slide-up">
       {/* ── Hero Banner ── */}
-      <div style={{ background: "linear-gradient(135deg,#1A1A3E 0%,#0F3460 60%,#16213E 100%)", padding: "22px 16px 28px", position: "relative", overflow: "hidden" }}>
-        {/* decorative circles */}
-        <div style={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", background: "rgba(255,184,0,0.06)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: -40, left: -40, width: 140, height: 140, borderRadius: "50%", background: "rgba(139,92,246,0.08)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", top: 20, left: "50%", width: 80, height: 80, borderRadius: "50%", background: "rgba(0,174,239,0.05)", pointerEvents: "none" }} />
+      {/* Animated hero with floating mascot */}
+      <div style={{ background: "linear-gradient(135deg,#0F0F2E 0%,#1A1A4E 40%,#0F3460 100%)", padding: "20px 16px 28px", position: "relative", overflow: "hidden", minHeight: 200 }}>
+        {/* Animated background stars */}
+        {[...Array(8)].map((_, i) => (
+          <div key={i} style={{
+            position: "absolute",
+            width: i % 2 === 0 ? 4 : 6,
+            height: i % 2 === 0 ? 4 : 6,
+            borderRadius: "50%",
+            background: "#fff",
+            opacity: 0.3 + (i * 0.05),
+            top: `${10 + (i * 11)}%`,
+            left: `${5 + (i * 12)}%`,
+            animation: `float ${2 + i * 0.3}s ease-in-out infinite`,
+            animationDelay: `${i * 0.4}s`
+          }} />
+        ))}
 
-        <div style={{ position: "relative" }}>
-          {/* Flag + greeting */}
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-            <span>🇳🇵</span>
-            <span>{lang === "np" ? "नमस्ते / Hello" : "नमस्ते / Hello"}</span>
-          </div>
+        {/* Large mascot emoji */}
+        <div style={{ position: "absolute", right: 16, top: 16, fontSize: 72, opacity: 0.9 }} className="floating">
+          {playerLevel >= 10 ? "🦁" : playerLevel >= 5 ? "🦊" : "🐣"}
+        </div>
 
-          {/* Big headline */}
-          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 26, lineHeight: 1.2, marginBottom: 6 }}>
-            {lang === "np" ? "आज के सिक्ने?" : "Ready to Level Up?"} <span style={{ fontSize: 28 }}>🚀</span>
+        <div style={{ position: "relative", maxWidth: "65%" }}>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>
+            🇳🇵 {lang === "np" ? "नमस्ते च्याम्पियन!" : "Hello Champion!"}
           </div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontWeight: 600, marginBottom: 18 }}>
-            {lang === "np" ? "खेलेर सिक्नुस् • मजाले पढ्नुस्!" : "Learn by playing • Have fun growing!"}
+          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 28, lineHeight: 1.15, marginBottom: 10 }}>
+            {lang === "np" ? "आज के सिक्ने?" : "What to learn"}<br/>
+            {lang === "np" ? "तयार हुनुहुन्छ? 🚀" : "today? 🚀"}
           </div>
+          {/* Level badge */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,184,0,0.2)", border: "1px solid rgba(255,184,0,0.5)", borderRadius: 20, padding: "5px 12px", marginBottom: 16 }}>
+            <span style={{ fontSize: 14 }}>👑</span>
+            <span style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, color: "#FFB800" }}>
+              {lang === "np" ? `लेभल ${playerLevel} खेलाडी` : `Level ${playerLevel} Player`}
+            </span>
+          </div>
+        </div>
 
-          {/* Stats row */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
-            {[
-              { icon: "🔥", val: `${streakDays}`, label: lang === "np" ? "दिन" : "Days", sub: lang === "np" ? "स्ट्रीक" : "Streak" },
-              { icon: "⭐", val: `${totalXP}`, label: "XP", sub: lang === "np" ? "कमाएको" : "Earned" },
-              { icon: "🎯", val: `${totalCompleted}`, label: lang === "np" ? "तह" : "Levels", sub: lang === "np" ? "सकियो" : "Done" },
-              { icon: "👑", val: `${playerLevel}`, label: lang === "np" ? "लेभल" : "Level", sub: lang === "np" ? "खेलाडी" : "Player" },
-            ].map(s => (
-              <div key={s.label} style={{ background: "rgba(255,255,255,0.08)", borderRadius: 14, padding: "10px 6px", textAlign: "center", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ fontSize: 16, marginBottom: 2 }}>{s.icon}</div>
-                <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15, color: "#FFB800" }}>{s.val}</div>
-                <div style={{ fontSize: 8, color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>{s.label}</div>
-                <div style={{ fontSize: 7, color: "rgba(255,255,255,0.3)", fontWeight: 600 }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
+        {/* Stats row — compact */}
+        <div style={{ display: "flex", gap: 8, overflow: "auto", scrollbarWidth: "none" }}>
+          {[
+            { icon: "🔥", val: `${streakDays}`, label: lang === "np" ? "दिन" : "Days" },
+            { icon: "⭐", val: `${totalXP}`, label: "XP" },
+            { icon: "🎯", val: `${totalCompleted}`, label: lang === "np" ? "तह" : "Done" },
+          ].map(s => (
+            <div key={s.label} style={{ background: "rgba(255,255,255,0.1)", borderRadius: 14, padding: "8px 14px", textAlign: "center", border: "1px solid rgba(255,255,255,0.12)", flexShrink: 0 }}>
+              <div style={{ fontSize: 16 }}>{s.icon}</div>
+              <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 16, color: "#FFB800" }}>{s.val}</div>
+              <div style={{ fontSize: 8, color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>{s.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -804,36 +820,50 @@ function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSub
         <span>{lang === "np" ? "विषय छान्नुस्" : "Choose Your Adventure"}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "8px 16px 16px" }}>
-        {Object.entries(LEVELS_DATA).map(([key, s]) => {
+        {Object.entries(LEVELS_DATA).map(([key, s], cardIdx) => {
           const done = (completedLevels[key] || []).length;
           const total = s.levels.length;
           const pct = Math.round((done / total) * 100);
+          const isFirstIncomplete = cardIdx === Object.entries(LEVELS_DATA).findIndex(([k]) => (completedLevels[k] || []).length < LEVELS_DATA[k].levels.length);
           return (
-            <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))", borderRadius: 20, padding: 14, cursor: "pointer", border: pct === 100 ? "2px solid rgba(255,184,0,0.6)" : "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden", minHeight: 120 }} className="card-hover btn-bounce">
+            <div key={key} onClick={() => onOpenSubject(key)} style={{ background: "linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))", borderRadius: 20, padding: 14, cursor: "pointer", border: pct === 100 ? "2px solid rgba(255,184,0,0.6)" : "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden", minHeight: 140 }} className="card-hover btn-bounce">
+              {/* Top gradient bar */}
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: s.gradient, borderRadius: "20px 20px 0 0" }} />
-              {pct === 100 && (
+              {/* Large blurred background emoji */}
+              <div style={{ position: "absolute", right: -5, bottom: -5, fontSize: 56, opacity: 0.12, transform: "rotate(-15deg)", pointerEvents: "none" }}>{s.emoji}</div>
+              {/* Status badges */}
+              {pct === 100 ? (
                 <div style={{ position: "absolute", top: 10, right: 10, background: "linear-gradient(135deg,#FFB800,#FF6B6B)", borderRadius: 10, padding: "2px 8px", fontSize: 9, fontWeight: 800, color: "#fff", zIndex: 2 }}>
-                  ✅ {lang === "np" ? "पूरा!" : "COMPLETE!"}
+                  ✅ {lang === "np" ? "पूरा!" : "DONE!"}
                 </div>
-              )}
+              ) : isFirstIncomplete ? (
+                <div style={{ position: "absolute", top: 10, right: 10, background: "linear-gradient(135deg,#FF6B6B,#8B5CF6)", borderRadius: 10, padding: "2px 8px", fontSize: 9, fontWeight: 800, color: "#fff", zIndex: 2 }} className="pulsing">
+                  ⭐ HOT
+                </div>
+              ) : done === 0 ? (
+                <div style={{ position: "absolute", top: 10, right: 10, background: "linear-gradient(135deg,#3DBF6E,#00AEEF)", borderRadius: 10, padding: "2px 8px", fontSize: 9, fontWeight: 800, color: "#fff", zIndex: 2 }}>
+                  NEW
+                </div>
+              ) : null}
               <div style={{ fontSize: 32, marginBottom: 8 }} className="floating">{s.emoji}</div>
               <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 13, lineHeight: 1.2, marginBottom: 2 }}>
                 {lang === "np" ? s.titleNp : s.title}
               </div>
-              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 700, marginBottom: 10 }}>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 700, marginBottom: 8 }}>
                 {lang === "np" ? s.title : s.titleNp}
               </div>
+              {/* Level count pill */}
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 4, background: `${s.color}22`, border: `1px solid ${s.color}55`, borderRadius: 10, padding: "2px 8px", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, fontWeight: 800, color: s.color }}>{done}/{total} {lang === "np" ? "तह" : "lvls"}</span>
+              </div>
               {pct === 100 && (
-                <div style={{ fontSize: 14, marginBottom: 6, textAlign: "center" }}>🎉🌟🏆</div>
+                <div style={{ fontSize: 13, marginBottom: 4, textAlign: "center" }}>🎉🌟🏆</div>
               )}
               {/* Progress */}
               <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 10, height: 5, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${pct}%`, background: s.gradient, borderRadius: 10, transition: "width 0.6s" }} />
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}>
-                  {done}/{total} {lang === "np" ? "तह" : "levels"}
-                </span>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
                 <span style={{ fontSize: 9, fontWeight: 800, color: pct === 100 ? "#4ade80" : "rgba(255,255,255,0.4)" }}>{pct}%</span>
               </div>
             </div>
@@ -926,6 +956,8 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
           const isDone = completedLevels.includes(level.id);
           const isUnlocked = level.id === 1 || completedLevels.includes(level.id - 1);
           const isLocked = !isUnlocked;
+          // "You are here" = first unlocked level not yet completed
+          const isNext = isUnlocked && !isDone && !s.levels.slice(0, i).some(l => !completedLevels.includes(l.id) && (l.id === 1 || completedLevels.includes(l.id - 1)));
 
           return (
             <div key={level.id} style={{ marginBottom: 10 }}>
@@ -933,10 +965,21 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
               {i > 0 && (
                 <div style={{ width: 2, height: 12, background: isDone ? s.color : "rgba(255,255,255,0.1)", margin: "0 auto -2px", borderRadius: 2, marginLeft: level.isBoss ? "50%" : i % 2 === 0 ? "30%" : "70%" }} />
               )}
+              {/* "You are here" indicator */}
+              {isNext && (
+                <div style={{ textAlign: level.isBoss ? "center" : i % 2 === 0 ? "left" : "right", paddingLeft: level.isBoss ? 0 : i % 2 === 0 ? 4 : 0, paddingRight: level.isBoss ? 0 : i % 2 === 0 ? 0 : 34, marginBottom: 4 }}>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: "#FFB800", background: "rgba(255,184,0,0.15)", border: "1px solid rgba(255,184,0,0.4)", borderRadius: 8, padding: "2px 8px" }}>
+                    {lang === "np" ? "→ तपाईं यहाँ हुनुहुन्छ" : "→ You are here"}
+                  </span>
+                </div>
+              )}
               <div
                 onClick={() => !isLocked && onPlayLevel(level)}
+                title={isLocked ? (lang === "np" ? "अघिल्लो तह पूरा गर्नुस्" : "Complete previous level") : ""}
                 style={{
-                  background: isDone ? `linear-gradient(135deg,${s.color}33,${s.color}11)` : level.isBoss ? "linear-gradient(135deg,rgba(255,184,0,0.15),rgba(255,107,107,0.1))" : "rgba(255,255,255,0.05)",
+                  background: isDone
+                    ? `linear-gradient(135deg,${s.color}44,${s.color}22)`
+                    : level.isBoss ? "linear-gradient(135deg,rgba(255,184,0,0.15),rgba(255,107,107,0.1))" : "rgba(255,255,255,0.05)",
                   border: isDone ? `2px solid ${s.color}` : level.isBoss ? "2px solid rgba(255,184,0,0.5)" : isLocked ? "2px solid rgba(255,255,255,0.06)" : "2px solid rgba(255,255,255,0.15)",
                   borderRadius: level.isBoss ? 20 : 16,
                   padding: level.isBoss ? "14px 18px" : "12px 16px",
@@ -946,6 +989,8 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
                   marginRight: level.isBoss ? 0 : i % 2 === 0 ? 30 : 0,
                   transition: "all 0.2s",
                   boxShadow: isDone ? `0 4px 15px ${s.bgGlow || "rgba(0,0,0,0.3)"}` : level.isBoss ? "0 4px 20px rgba(255,184,0,0.2)" : "none",
+                  position: "relative",
+                  transform: level.isBoss ? "scale(1.04)" : "scale(1)",
                 }}
                 className={`${isLocked ? "level-locked" : "card-hover btn-bounce"} ${level.isBoss ? "boss-glow" : ""}`}
               >
@@ -961,7 +1006,7 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
                     {lang === "np" ? level.nameNp : level.name}
                   </div>
                   <div style={{ fontSize: 10, color: isLocked ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)", fontWeight: 600, marginBottom: 4 }}>
-                    {lang === "np" ? level.name : level.nameNp}
+                    {isLocked ? (lang === "np" ? "अघिल्लो तह पूरा गर्नुस्" : "Complete previous level") : (lang === "np" ? level.name : level.nameNp)}
                   </div>
                   {!isLocked && (
                     <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
@@ -987,6 +1032,11 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
                     {level.isBoss ? `⚔️ ${lang === "np" ? "लड!" : "Fight!"}` : `▶ ${lang === "np" ? "खेल" : "Play"}`}
                   </div>
                 )}
+
+                {/* Level number badge */}
+                <div style={{ position: "absolute", right: 8, bottom: 6, background: "rgba(255,255,255,0.1)", borderRadius: 8, padding: "2px 6px", fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.4)" }}>
+                  #{level.id}
+                </div>
               </div>
             </div>
           );
@@ -1009,6 +1059,7 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
   const [hearts, setHearts] = useState(3);
   const [combo, setCombo] = useState(0);
   const [showBonus, setShowBonus] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(20);
 
   // Get questions for this specific level — no overlap with other levels
   const allQuestions = MINI_QUIZZES[subjectKey] || MINI_QUIZZES.comm;
@@ -1029,6 +1080,25 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
 
   const handleAnswer = (i) => {
     if (chosen !== null) return;
+
+    // Handle timeout
+    if (i === -1) {
+      setChosen(-1);
+      setCombo(0);
+      setHearts(h => Math.max(0, h - 1));
+      setShowBonus(lang === "np" ? "⏰ समय सकियो!" : "⏰ Time's Up!");
+      setTimeout(() => {
+        setShowBonus(null);
+        if (qIdx + 1 >= 4 || hearts <= 1) {
+          setPhase("complete");
+        } else {
+          setChosen(null);
+          setQIdx(x => x + 1);
+        }
+      }, 1500);
+      return;
+    }
+
     setChosen(i);
     const correct = i === currentQ.ans;
     if (correct) {
@@ -1057,13 +1127,44 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
 
   const earnedXP = Math.round(level.xp * (score / 4) + (score === 4 ? level.xp * 0.5 : 0));
 
+  // 20-second countdown timer per question
+  useEffect(() => {
+    if (phase !== "question" || chosen !== null) return;
+    setTimeLeft(20);
+    const timer = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 1) {
+          clearInterval(timer);
+          handleAnswer(-1);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [qIdx, phase]);
+
   if (phase === "intro") {
+    const difficulty = level.id <= 3
+      ? { icon: "🟢", en: "Easy", np: "सजिलो", color: "#3DBF6E" }
+      : level.id <= 7
+      ? { icon: "🟡", en: "Medium", np: "मध्यम", color: "#FFB800" }
+      : level.id <= 10
+      ? { icon: "🔴", en: "Hard", np: "कठिन", color: "#FF6B6B" }
+      : { icon: "💀", en: "Expert", np: "विशेषज्ञ", color: "#8B5CF6" };
     return (
       <div style={{ padding: 20, textAlign: "center" }} className="pop-in">
         <div style={{ background: s.gradient, borderRadius: 28, padding: "28px 20px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
           <div style={{ fontSize: 64, marginBottom: 12 }} className="floating">{level.icon}</div>
           <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 24, color: "#fff", marginBottom: 6 }}>{lang === "np" ? level.nameNp : level.name}</div>
+          {/* Difficulty badge */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${difficulty.color}22`, border: `1px solid ${difficulty.color}66`, borderRadius: 20, padding: "4px 12px", marginBottom: 12 }}>
+            <span>{difficulty.icon}</span>
+            <span style={{ fontSize: 12, fontWeight: 800, color: difficulty.color }}>
+              {lang === "np" ? difficulty.np : difficulty.en}
+            </span>
+          </div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", fontWeight: 600, marginBottom: 16 }}>{level.description}</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
             {[
@@ -1195,10 +1296,42 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
 
       <div style={{ padding: 16 }}>
         {/* Question */}
-        <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: 18, marginBottom: 14, textAlign: "center" }}>
+        <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: 18, marginBottom: 10, textAlign: "center" }}>
           <div style={{ fontSize: 36, marginBottom: 10 }}>{currentQ.emoji}</div>
           <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 17, lineHeight: 1.4, color: "#fff" }}>{currentQ.q}</div>
         </div>
+
+        {/* Timer bar */}
+        {(() => {
+          const timerColor = timeLeft > 10 ? "#3DBF6E" : timeLeft > 5 ? "#FFB800" : "#FF6B6B";
+          const pct = (timeLeft / 20) * 100;
+          return (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: timerColor }}>⏱️ {lang === "np" ? "समय" : "Time"}</span>
+                <span style={{
+                  fontFamily: "'Fredoka One',cursive",
+                  fontSize: 16,
+                  color: timerColor,
+                  animation: timeLeft <= 5 && chosen === null ? "pulse 0.6s ease-in-out infinite" : "none",
+                  display: "inline-block",
+                }}>
+                  {chosen !== null ? "–" : `${timeLeft}s`}
+                </span>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 8, height: 8, overflow: "hidden" }}>
+                <div style={{
+                  height: "100%",
+                  width: chosen !== null ? "0%" : `${pct}%`,
+                  background: timerColor,
+                  borderRadius: 8,
+                  transition: "width 1s linear, background 0.5s",
+                  boxShadow: timeLeft <= 5 && chosen === null ? `0 0 8px ${timerColor}` : "none",
+                }} />
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Options */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
