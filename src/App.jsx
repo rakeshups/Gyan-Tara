@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
+import { useState, useEffect, useRef, useCallback, createContext, useContext, useMemo } from "react";
 
 // ══════════════════════════════════════════════
 // LANGUAGE CONTEXT
@@ -453,6 +453,7 @@ STRICT RULES - NEVER BREAK THESE:
 6. Keep responses SHORT (3-5 sentences max) and SIMPLE for kids.
 7. Always end with an encouraging question to keep the child learning.
 8. Address the child warmly as "friend" or "साथी".
+9. If the user writes in Nepali, respond primarily in Nepali with some English. If the user writes in English, respond in English with some Nepali words.
 
 You make learning FUN and SAFE for children! 🎓🌈`;
 
@@ -485,7 +486,7 @@ const CSS = `
 @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; scroll-behavior: smooth; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
 
@@ -578,9 +579,14 @@ export default function App() {
 
   const addXP = useCallback((amount) => {
     setTotalXP(p => p + amount);
-    setShowReward({ xp: amount });
+    const msg = amount >= 150
+      ? (lang === "np" ? "🏆 बस जितियो!" : "🏆 BOSS DEFEATED!")
+      : amount >= 100
+      ? (lang === "np" ? "⭐ अद्भुत!" : "⭐ AMAZING!")
+      : (lang === "np" ? "🌟 शाबास!" : "🌟 GREAT JOB!");
+    setShowReward({ xp: amount, message: msg });
     setTimeout(() => setShowReward(null), 2500);
-  }, []);
+  }, [lang]);
 
   const completeLevel = useCallback((subjectKey, levelId, xp) => {
     setCompletedLevels(prev => ({
@@ -611,19 +617,19 @@ export default function App() {
       {showReward && (() => {
         const xp = showReward.xp;
         const rewardEmoji = xp >= 150 ? "🏆" : xp >= 100 ? "⭐" : xp >= 50 ? "🌟" : "💪";
-        const msgEn = xp >= 150 ? "BOSS DEFEATED!" : xp >= 100 ? "AMAZING!" : xp >= 50 ? "GREAT JOB!" : "KEEP GOING!";
-        const msgNp = xp >= 150 ? "बस जितियो!" : xp >= 100 ? "अद्भुत!" : xp >= 50 ? "शाबास!" : "जारी राख्नुस्!";
         return (
           <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 999, textAlign: "center", pointerEvents: "none" }} className="pop-in">
             <div style={{ background: "linear-gradient(135deg,#FFB800,#FF6B6B)", borderRadius: 28, padding: "28px 50px", boxShadow: "0 20px 60px rgba(255,184,0,0.5)" }}>
               <div style={{ fontSize: 56, marginBottom: 6 }} className="spin-star">{rewardEmoji}</div>
               <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 28, color: "#fff", marginBottom: 2 }}>
-                {lang === "np" ? msgNp : msgEn}
+                {showReward.message}
               </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)", marginBottom: 8 }}>
-                {lang === "np" ? msgEn : msgNp}
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginTop: 4 }}>
+                +{xp} XP ✨
               </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>+{xp} XP ✨</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4, fontWeight: 600 }}>
+                {lang === "np" ? "राम्रो काम!" : "Keep it up!"}
+              </div>
             </div>
           </div>
         );
@@ -708,7 +714,10 @@ function TopBar({ totalXP, playerLevel, xpProgress, xpForNextLevel, streakDays }
 // ══════════════════════════════════════════════
 function HomeView({ totalXP, playerLevel, streakDays, completedLevels, onOpenSubject, onOpenTutor }) {
   const { lang } = useLang();
-  const totalCompleted = Object.values(completedLevels).reduce((a, arr) => a + arr.length, 0);
+  const totalCompleted = useMemo(
+    () => Object.values(completedLevels).reduce((a, arr) => a + arr.length, 0),
+    [completedLevels]
+  );
 
   const greetings = lang === "np"
     ? ["नमस्ते च्याम्पियन! 👋", "आज के सिक्ने? 🌟", "तयार हुनुहुन्छ? ⚔️"]
@@ -1076,14 +1085,13 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
     const pool = useQuestions.length >= 4 ? useQuestions : allQuestions;
     return [...pool].sort(() => Math.random() - 0.5).slice(0, 4);
   });
-  const currentQ = gameQuestions[qIdx];
+  const currentQ = gameQuestions[qIdx] || { q: "Great job completing this level! 🌟", opts: ["Continue ✅", "Keep going!", "You did it!", "Amazing!"], ans: 0, emoji: "🏆" };
 
   const handleAnswer = (i) => {
     if (chosen !== null) return;
 
     // Handle timeout
     if (i === -1) {
-      setChosen(-1);
       setCombo(0);
       setHearts(h => Math.max(0, h - 1));
       setShowBonus(lang === "np" ? "⏰ समय सकियो!" : "⏰ Time's Up!");
@@ -1366,9 +1374,13 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
 // SAFE AI TUTOR VIEW
 // ══════════════════════════════════════════════
 function SafeAITutorView({ onBack }) {
-  const [messages, setMessages] = useState([
-    { role: "bot", text: "नमस्ते साथी! 🙏 Hello friend!\n\nI am Gyan Guru — your safe AI teacher! 🤖✨\n\nI can help you with:\n📚 School subjects\n🇳🇵 Nepal facts\n🌍 General knowledge\n🎯 Fun learning games\n\nAsk me ANYTHING! / कुनै पनि सोध्नुस्! 🌟" }
-  ]);
+  const { lang } = useLang();
+  const [messages, setMessages] = useState(() => [{
+    role: "bot",
+    text: lang === "np"
+      ? "नमस्ते साथी! 🙏\n\nम ज्ञान गुरु हुँ — तिम्रो सुरक्षित AI शिक्षक! 🤖✨\n\nमलाई सोध्न सक्छौ:\n📚 स्कूलको विषयहरू\n🇳🇵 नेपालका तथ्यहरू\n🌍 सामान्य ज्ञान\n🎯 मजेदार सिकाइ\n\nकुनै पनि सोध्नुस्! 🌟"
+      : "नमस्ते साथी! 🙏 Hello friend!\n\nI am Gyan Guru — your safe AI teacher! 🤖✨\n\nI can help you with:\n📚 School subjects\n🇳🇵 Nepal facts\n🌍 General knowledge\n🎯 Fun learning games\n\nAsk me ANYTHING! 🌟"
+  }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const chatRef = useRef(null);
@@ -1386,7 +1398,7 @@ function SafeAITutorView({ onBack }) {
 
     try {
       const history = messages.slice(-8).map(m => ({ role: m.role === "bot" ? "assistant" : "user", content: m.text }));
-      
+
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1399,28 +1411,32 @@ function SafeAITutorView({ onBack }) {
       });
 
       const data = await res.json();
-      const reply = data.content?.[0]?.text || "Oops! Try again! 😅";
+      const reply = data.content?.[0]?.text || (lang === "np" ? "माफ गर्नुस्! फेरि प्रयास गर्नुस्! 😅" : "Oops! Try again! 😅");
       setMessages(prev => [...prev, { role: "bot", text: reply }]);
     } catch {
-      setMessages(prev => [...prev, { role: "bot", text: "Connection problem 😅 Please try again!\nसम्पर्क समस्या भयो!" }]);
+      setMessages(prev => [...prev, { role: "bot", text: lang === "np" ? "सम्पर्क समस्या भयो! 😅 फेरि प्रयास गर्नुस्!" : "Connection problem 😅 Please try again!\nसम्पर्क समस्या भयो!" }]);
     }
     setLoading(false);
   };
 
-  const quickTopics = ["🇳🇵 Nepal facts", "📐 Math help", "🦁 Animals", "🌍 World GK", "🎯 Learning tips", "😊 Be kind"];
+  const quickTopics = lang === "np"
+    ? ["🇳🇵 नेपाल तथ्य", "📐 गणित मदत", "🦁 जनावरहरू", "🌍 विश्व GK", "🎯 सिकाइ टिप्स", "😊 दयालु बन्नुस्"]
+    : ["🇳🇵 Nepal facts", "📐 Math help", "🦁 Animals", "🌍 World GK", "🎯 Learning tips", "😊 Be kind"];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 136px)" }} className="slide-up">
       {/* Header */}
       <div style={{ background: "linear-gradient(135deg,#8B5CF6,#00AEEF)", padding: "14px 16px", borderRadius: "0 0 20px 20px", flexShrink: 0 }}>
-        <button onClick={onBack} style={{ background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", borderRadius: 10, padding: "5px 12px", cursor: "pointer", fontWeight: 700, fontSize: 11, fontFamily: "'Nunito',sans-serif", marginBottom: 8 }}>← Back</button>
+        <button onClick={onBack} style={{ background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", borderRadius: 10, padding: "5px 12px", cursor: "pointer", fontWeight: 700, fontSize: 11, fontFamily: "'Nunito',sans-serif", marginBottom: 8 }}>
+          ← {lang === "np" ? "पछाडि" : "Back"}
+        </button>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, border: "2px solid rgba(255,255,255,0.4)" }} className="pulsing">🤖</div>
           <div>
             <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 17, color: "#fff" }}>Gyan Guru AI</div>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontWeight: 600, display: "flex", alignItems: "center", gap: 5 }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
-              🔒 Safe for kids • बच्चाहरूको लागि सुरक्षित
+              {lang === "np" ? "🔒 बच्चाहरूको लागि सुरक्षित" : "🔒 Safe for kids • बच्चाहरूको लागि सुरक्षित"}
             </div>
           </div>
         </div>
@@ -1462,7 +1478,7 @@ function SafeAITutorView({ onBack }) {
       {/* Input */}
       <div style={{ padding: "10px 14px 14px", display: "flex", gap: 8, alignItems: "center", background: "rgba(255,255,255,0.03)", borderTop: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}>
         <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMsg(input)}
-          placeholder="Ask me! / कुनै पनि सोध्नुस्! 🌟"
+          placeholder={lang === "np" ? "कुनै पनि सोध्नुस्! 🌟" : "Ask me anything! 🌟"}
           style={{ flex: 1, border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 24, padding: "10px 14px", fontSize: 12, fontFamily: "'Nunito',sans-serif", outline: "none", background: "rgba(255,255,255,0.07)", color: "#fff" }} />
         <button onClick={() => sendMsg(input)} disabled={loading} style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#8B5CF6,#00AEEF)", border: "none", color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, opacity: loading ? 0.6 : 1 }}>➤</button>
       </div>
@@ -1478,8 +1494,22 @@ function ProfileView({ totalXP, playerLevel, completedLevels, streakDays }) {
   const totalDone = Object.values(completedLevels).reduce((a, arr) => a + arr.length, 0);
   const unlockedBadges = BADGES.filter(b => b.condition(totalXP));
 
+  const motivations = totalDone === 0
+    ? { en: "Start your first adventure! 🚀", np: "पहिलो यात्रा सुरु गर्नुस्! 🚀" }
+    : totalDone < 10
+    ? { en: "Great start! Keep exploring! 🌟", np: "राम्रो सुरुवात! जारी राख्नुस्! 🌟" }
+    : totalDone < 30
+    ? { en: "You're on fire! Amazing progress! 🔥", np: "तिमी एकदम राम्रो गर्दैछौ! 🔥" }
+    : { en: "LEGEND! You're almost a champion! 👑", np: "किंवदन्ती! तिमी च्याम्पियन बन्न लागेको छौ! 👑" };
+
   return (
     <div className="slide-up">
+      {/* Motivational Banner */}
+      <div style={{ background: "linear-gradient(135deg,#1A1A3E,#0F3460)", padding: "14px 16px", textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+        <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 15 }} className="shimmer-text">
+          {lang === "np" ? motivations.np : motivations.en}
+        </div>
+      </div>
       {/* Profile Header */}
       <div style={{ background: "linear-gradient(135deg,#1A1A3E,#0F3460)", padding: "24px 16px 20px", textAlign: "center", borderRadius: "0 0 28px 28px" }}>
         <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(135deg,#FFB800,#FF6B6B)", margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 38, border: "3px solid rgba(255,255,255,0.3)" }} className="floating">🧒</div>
@@ -1574,11 +1604,15 @@ function BottomNav({ activeTab, onChange }) {
   return (
     <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: "rgba(15,15,30,0.97)", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", zIndex: 100, backdropFilter: "blur(20px)", borderRadius: "24px 24px 0 0" }}>
       {tabs.map(t => (
-        <button key={t.id} onClick={() => onChange(t.id)} style={{ flex: 1, border: "none", background: "transparent", padding: "10px 4px 10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+        <button key={t.id} onClick={() => onChange(t.id)} style={{ flex: 1, border: "none", background: "transparent", padding: "8px 4px 10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, transform: activeTab === t.id ? "translateY(-2px)" : "none", transition: "transform 0.2s" }}>
+          {/* Active dot */}
+          {activeTab === t.id && (
+            <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#FFB800", marginBottom: 2 }} />
+          )}
           <div style={{ width: 40, height: 32, borderRadius: 14, background: activeTab === t.id ? "linear-gradient(135deg,#FFB800,#FF6B6B)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}>
             <span style={{ fontSize: activeTab === t.id ? 20 : 18, opacity: activeTab === t.id ? 1 : 0.45, transition: "all 0.2s" }}>{t.icon}</span>
           </div>
-          <span style={{ fontSize: 9, fontWeight: activeTab === t.id ? 800 : 600, color: activeTab === t.id ? "#FFB800" : "rgba(255,255,255,0.35)", letterSpacing: 0.3 }}>{t.label}</span>
+          <span style={{ fontSize: activeTab === t.id ? 10 : 9, fontWeight: activeTab === t.id ? 800 : 600, color: activeTab === t.id ? "#FFB800" : "rgba(255,255,255,0.35)", letterSpacing: 0.3 }}>{t.label}</span>
         </button>
       ))}
     </div>
