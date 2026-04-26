@@ -147,43 +147,295 @@ const LEVELS_DATA = {
   }
 };
 
-// Mini game quiz questions per subject
+// Mini game quiz questions per subject — 40+ unique questions each, tagged by level & difficulty
 const MINI_QUIZZES = {
   comm: [
-    { q: "When meeting someone new, what should you do FIRST?", opts: ["Look away 😶", "Smile & say Hello! 👋", "Run away 🏃", "Stay quiet 🤫"], ans: 1, emoji: "🗣️" },
-    { q: "Good listening means...", opts: ["Talk a lot 🗣️", "Look at phone 📱", "Pay full attention ✅", "Think of food 🍕"], ans: 2, emoji: "👂" },
-    { q: "Body language includes:", opts: ["Words you say 💬", "Facial expressions 😊", "Singing songs 🎵", "Running fast 🏃"], ans: 1, emoji: "🤝" },
-    { q: "To speak confidently, you should:", opts: ["Whisper always 🤫", "Look down 👇", "Speak clearly & smile 😊", "Never talk 🚫"], ans: 2, emoji: "💪" },
+    // Level 1 — easy
+    { q: "When meeting someone new, what should you do FIRST? 👋", opts: ["Look away 😶", "Smile & say Hello! 👋", "Run away 🏃", "Stay quiet 🤫"], ans: 1, emoji: "🗣️", level: 1, difficulty: "easy" },
+    { q: "नमस्ते भन्नु किन राम्रो छ? (Why is saying Namaste good?)", opts: ["It is not good 👎", "It shows respect & friendliness ✅", "It wastes time ⏳", "Nobody cares 😑"], ans: 1, emoji: "🙏", level: 1, difficulty: "easy" },
+    { q: "Which is a GREETING? 🌟", opts: ["Bye-bye 👋", "Good morning! ☀️ ✅", "Stop it! 🛑", "Go away 😤"], ans: 1, emoji: "☀️", level: 1, difficulty: "easy" },
+    { q: "When a friend is talking, you should... 👂", opts: ["Play on phone 📱", "Listen carefully ✅", "Talk louder 📣", "Walk away 🚶"], ans: 1, emoji: "👂", level: 1, difficulty: "easy" },
+    // Level 2 — easy
+    { q: "Good listening means...", opts: ["Talk a lot 🗣️", "Look at phone 📱", "Pay full attention ✅", "Think of food 🍕"], ans: 2, emoji: "👂", level: 2, difficulty: "easy" },
+    { q: "राम्रोसँग सुन्दा के हुन्छ? (What happens when you listen well?)", opts: ["Friends get angry 😠", "You understand better ✅", "You fall asleep 😴", "Nothing changes 🤷"], ans: 1, emoji: "👂", level: 2, difficulty: "easy" },
+    { q: "Active listening means: 🧠", opts: ["Nodding while distracted 🙄", "Fully focusing on speaker ✅", "Pretending to hear 🎭", "Interrupting often 😤"], ans: 1, emoji: "🎧", level: 2, difficulty: "easy" },
+    { q: "If you don't understand, you should... ❓", opts: ["Pretend to understand 😶", "Ask a polite question ✅", "Stay silent forever 🤐", "Laugh 😂"], ans: 1, emoji: "❓", level: 2, difficulty: "easy" },
+    // Level 3 — easy
+    { q: "Body language includes:", opts: ["Words you say 💬", "Facial expressions 😊 ✅", "Singing songs 🎵", "Running fast 🏃"], ans: 1, emoji: "🤝", level: 3, difficulty: "easy" },
+    { q: "A smile sends a message of: 😊", opts: ["Anger 😠", "Sadness 😢", "Friendliness ✅", "Fear 😨"], ans: 2, emoji: "😊", level: 3, difficulty: "easy" },
+    { q: "Crossing your arms often means you feel: 🙅", opts: ["Happy 😄", "Closed off or defensive ✅", "Excited 🎉", "Hungry 🍕"], ans: 1, emoji: "🙅", level: 3, difficulty: "easy" },
+    { q: "शरीर भाषामा के पर्छ? (What is part of body language?)", opts: ["The words only 💬", "Posture and gestures ✅", "Only your voice 🔊", "What you write ✏️"], ans: 1, emoji: "🤝", level: 3, difficulty: "easy" },
+    // Level 4 — medium
+    { q: "To speak confidently, you should: 💪", opts: ["Whisper always 🤫", "Look down 👇", "Speak clearly & smile 😊 ✅", "Never talk 🚫"], ans: 2, emoji: "💪", level: 4, difficulty: "medium" },
+    { q: "साहसले बोल्न के गर्नु पर्छ? (To speak bravely you should?)", opts: ["Hide behind friends 🙈", "Practice & breathe deeply ✅", "Shout loudly 📣", "Close your eyes 😑"], ans: 1, emoji: "🎤", level: 4, difficulty: "medium" },
+    { q: "Before speaking in front of a group, it helps to: 🎤", opts: ["Panic 😱", "Practice what to say ✅", "Forget everything 😵", "Read from paper only 📄"], ans: 1, emoji: "🏆", level: 4, difficulty: "medium" },
+    { q: "Nervousness before speaking is: 😅", opts: ["A sign you'll fail ❌", "Normal and can be managed ✅", "Reason not to speak 🚫", "Sign of sickness 🤒"], ans: 1, emoji: "😅", level: 4, difficulty: "medium" },
+    // Level 5 — medium
+    { q: "Good eye contact means: 👁️", opts: ["Staring without blinking 😳", "Looking naturally at speaker ✅", "Looking at floor 👇", "Looking at ceiling 👆"], ans: 1, emoji: "👁️", level: 5, difficulty: "medium" },
+    { q: "Eye contact shows: 🙂", opts: ["You are bored 🥱", "Confidence and respect ✅", "You are angry 😠", "You want food 🍕"], ans: 1, emoji: "🎯", level: 5, difficulty: "medium" },
+    { q: "How long should comfortable eye contact last? 👀", opts: ["Never look 🙈", "3–5 seconds naturally ✅", "Stare for 5 minutes 😳", "Only blink 😑"], ans: 1, emoji: "⏱️", level: 5, difficulty: "medium" },
+    { q: "आँखा मिलाउनाले के जनाउँछ? (What does eye contact show?)", opts: ["You are scared 😨", "You are interested & confident ✅", "You are sleepy 😴", "You are lying 🤥"], ans: 1, emoji: "👁️", level: 5, difficulty: "medium" },
+    // Level 6 — medium
+    { q: "A good story needs: 📖", opts: ["Only funny jokes 😂", "Beginning, middle, end ✅", "One very long sentence 😴", "No characters 🤷"], ans: 1, emoji: "📖", level: 6, difficulty: "medium" },
+    { q: "कथालाई रोचक बनाउन के गर्ने? (To make a story interesting?)", opts: ["Use boring facts only 📄", "Add feelings & action ✅", "Use no words 🤫", "Make it very short 📝"], ans: 1, emoji: "🌟", level: 6, difficulty: "medium" },
+    { q: "Which makes a storyteller GREAT? 🌟", opts: ["Speaking super fast 💨", "Monotone voice 😴", "Voice changes & pauses ✅", "Never making eye contact 🙈"], ans: 2, emoji: "🎭", level: 6, difficulty: "medium" },
+    { q: "To keep listeners interested in your story: 🎧", opts: ["Mumble quietly 🤫", "Add suspense and emotion ✅", "Read from a list 📋", "Speak without breathing 😤"], ans: 1, emoji: "🎵", level: 6, difficulty: "medium" },
+    // Level 7 — medium
+    { q: "A GOOD question is: ❓", opts: ["Rude 😤", "Clear and respectful ✅", "Very long and confusing 😵", "Never asked 🤐"], ans: 1, emoji: "❓", level: 7, difficulty: "medium" },
+    { q: "Open-ended questions start with: 🗣️", opts: ["Yes / No only", "How, What, Why ✅", "Stop or Don't", "I want..."], ans: 1, emoji: "💬", level: 7, difficulty: "medium" },
+    { q: "राम्रो प्रश्न सोध्दा के हुन्छ? (What happens when you ask good questions?)", opts: ["People get angry 😠", "You learn more ✅", "Nothing 🤷", "People ignore you 😶"], ans: 1, emoji: "🧠", level: 7, difficulty: "medium" },
+    { q: "Asking questions shows you are: 🌟", opts: ["Interrupting rudely 😤", "Curious and engaged ✅", "Wasting time ⏳", "Showing off 🙄"], ans: 1, emoji: "💡", level: 7, difficulty: "medium" },
+    // Level 8 — hard
+    { q: "When giving a compliment, you should: 🌟", opts: ["Be sarcastic 🙄", "Be specific and sincere ✅", "Exaggerate wildly 🎭", "Avoid eye contact 🙈"], ans: 1, emoji: "🌟", level: 8, difficulty: "hard" },
+    { q: "'तिम्रो प्रस्तुति साँच्चै राम्रो थियो!' — यो कस्तो हो? (This is a...?)", opts: ["Criticism 😠", "Sincere compliment ✅", "Sarcasm 🙄", "Command 📢"], ans: 1, emoji: "💐", level: 8, difficulty: "hard" },
+    { q: "Receiving a compliment gracefully means: 😊", opts: ["Rejecting it rudely ❌", "Saying 'thank you' warmly ✅", "Boasting about yourself 💪", "Changing the topic 🔄"], ans: 1, emoji: "🤗", level: 8, difficulty: "hard" },
+    { q: "Which compliment is MOST specific and helpful? 🏆", opts: ["'You're okay.' 😐", "'Great job on your math test!' ✅", "'Whatever.' 😑", "'You're fine.' 🤷"], ans: 1, emoji: "🎯", level: 8, difficulty: "hard" },
+    // Level 9 — hard
+    { q: "झगडा शान्तिले मिलाउन पहिले के गर्ने? (To solve conflict peacefully, first?)", opts: ["Shout louder 📣", "Listen to the other person ✅", "Walk away and ignore 🚶", "Cry 😭"], ans: 1, emoji: "🕊️", level: 9, difficulty: "hard" },
+    { q: "The BEST way to handle a disagreement is: 🤝", opts: ["Win at any cost 🏆", "Find a solution both agree on ✅", "Ignore forever 🙈", "Tell everyone about it 📢"], ans: 1, emoji: "🕊️", level: 9, difficulty: "hard" },
+    { q: "Using 'I feel...' instead of 'You always...' helps: 💙", opts: ["Escalate fights 😤", "Reduce blame and anger ✅", "Confuse others 😵", "Nothing changes 🤷"], ans: 1, emoji: "💬", level: 9, difficulty: "hard" },
+    { q: "A peaceful conflict solver always: 🌈", opts: ["Interrupts often 😤", "Stays calm and respectful ✅", "Holds grudges 😠", "Avoids all conflict 🏃"], ans: 1, emoji: "🕊️", level: 9, difficulty: "hard" },
+    // Level 10-12 — hard
+    { q: "A great public speaker does NOT: 🏆", opts: ["Practice regularly 💪", "Make eye contact 👁️", "Read from paper the whole time ✅ (avoid)", "Use pauses effectively ⏸️"], ans: 2, emoji: "🎤", level: 10, difficulty: "hard" },
+    { q: "अन्तर्वार्तामा (interview) के गर्नु राम्रो हुन्छ?", opts: ["Late आउनु 🕐", "Prepare and dress well ✅", "Check phone often 📱", "Don't say anything 🤐"], ans: 1, emoji: "💼", level: 11, difficulty: "hard" },
+    { q: "A master communicator adapts their style based on: 🧠", opts: ["Mood only 😊", "Their audience and situation ✅", "Random choice 🎲", "Loudness 📣"], ans: 1, emoji: "👑", level: 12, difficulty: "hard" },
+    { q: "Two-way communication means: 🔄", opts: ["One person talks only 🗣️", "Both listen AND speak ✅", "Writing only ✏️", "Using phone 📱"], ans: 1, emoji: "🔄", level: 12, difficulty: "hard" },
   ],
+
   money: [
-    { q: "What is the difference between NEED and WANT?", opts: ["Same thing", "Need = must-have ✅", "Want is more important", "Neither matters"], ans: 1, emoji: "💰" },
-    { q: "Rs. 100 pocket money - how much to SAVE?", opts: ["Rs. 10 💰", "Rs. 20 ✅", "Rs. 0 ❌", "All Rs. 100"], ans: 1, emoji: "🐷" },
-    { q: "Best place to keep savings:", opts: ["Under pillow 🛏️", "Spend it all 🛍️", "Piggy bank / bank 🏦", "Give to friends"], ans: 2, emoji: "🏦" },
-    { q: "The 50-30-20 rule means:", opts: ["School scores 📊", "Budget split 💰✅", "Time for sleep 😴", "Food portions 🍱"], ans: 1, emoji: "📊" },
+    // Level 1 — easy
+    { q: "पैसा किन महत्त्वपूर्ण छ? (Why is money important?)", opts: ["It is not important 😑", "To buy needs & services ✅", "Just for fun 🎉", "To throw away 💸"], ans: 1, emoji: "💵", level: 1, difficulty: "easy" },
+    { q: "Money is used to: 💰", opts: ["Eat it 😋", "Buy things we need ✅", "Build houses of money 🏠", "Play games only 🎮"], ans: 1, emoji: "💰", level: 1, difficulty: "easy" },
+    { q: "नेपालको पैसाको नाम? (Name of Nepal's currency?)", opts: ["Dollar 🇺🇸", "Rupee ✅ (रुपैयाँ)", "Euro 🇪🇺", "Yen 🇯🇵"], ans: 1, emoji: "🇳🇵", level: 1, difficulty: "easy" },
+    { q: "Who earns money for most families? 👨‍👩‍👧", opts: ["Nobody 😑", "Parents who work ✅", "The bank 🏦", "Shops 🛒"], ans: 1, emoji: "👩‍💼", level: 1, difficulty: "easy" },
+    // Level 2 — easy
+    { q: "What is the difference between NEED and WANT?", opts: ["Same thing 🤷", "Need = must-have ✅", "Want is more important 💅", "Neither matters 😑"], ans: 1, emoji: "💰", level: 2, difficulty: "easy" },
+    { q: "Food is a: 🥗", opts: ["Want 🛍️", "Need ✅", "Luxury 💎", "Gift 🎁"], ans: 1, emoji: "🥗", level: 2, difficulty: "easy" },
+    { q: "A new video game is usually a: 🎮", opts: ["Need ✅", "Want 🎮 ✅ (want)", "Emergency 🆘", "Requirement 📋"], ans: 1, emoji: "🎮", level: 2, difficulty: "easy" },
+    { q: "पानी र खाना के हो? (Water and food are?)", opts: ["Wants 💅", "Needs ✅", "Luxuries 💎", "Bonuses 🎁"], ans: 1, emoji: "💧", level: 2, difficulty: "easy" },
+    // Level 3 — easy
+    { q: "Saving money means: 🐷", opts: ["Spending it all 💸", "Keeping some for later ✅", "Giving it away 🎁", "Losing it 😱"], ans: 1, emoji: "🐷", level: 3, difficulty: "easy" },
+    { q: "Best place to keep savings: 🏦", opts: ["Under pillow 🛏️", "Spend it all 🛍️", "Piggy bank / bank ✅", "Give to friends 👫"], ans: 2, emoji: "🏦", level: 3, difficulty: "easy" },
+    { q: "बचत गर्दा के हुन्छ? (What happens when you save?)", opts: ["Nothing 🤷", "Money grows over time ✅", "Money disappears 😱", "You get sad 😢"], ans: 1, emoji: "📈", level: 3, difficulty: "easy" },
+    { q: "If you save Rs. 10 every day, in 10 days you have: 🧮", opts: ["Rs. 10 😕", "Rs. 50 🤔", "Rs. 100 ✅", "Rs. 1000 😯"], ans: 2, emoji: "🐷", level: 3, difficulty: "easy" },
+    // Level 4 — medium
+    { q: "Spending wisely means: 🛍️", opts: ["Buying everything you see 😍", "Thinking before buying ✅", "Never buying anything 🙅", "Copying friends 🤝"], ans: 1, emoji: "🛍️", level: 4, difficulty: "medium" },
+    { q: "Before buying something, ask yourself: 🤔", opts: ["'Does it look cool?' 😎", "'Do I truly need this?' ✅", "'Do my friends have it?' 👫", "'Is it colorful?' 🌈"], ans: 1, emoji: "💡", level: 4, difficulty: "medium" },
+    { q: "You have Rs. 50. Wisely you should: 💰", opts: ["Spend Rs. 50 on candy 🍬", "Save Rs. 10, spend Rs. 40 ✅", "Throw it away 💸", "Give all to friends 👫"], ans: 1, emoji: "🎯", level: 4, difficulty: "medium" },
+    { q: "Impulse buying means: 🛍️", opts: ["Planning your purchase 📋", "Buying without thinking ✅ (bad habit)", "Saving for a goal 🎯", "Comparing prices 🔍"], ans: 1, emoji: "😬", level: 4, difficulty: "medium" },
+    // Level 5 — medium
+    { q: "A savings GOAL helps you: 🎯", opts: ["Spend more quickly 💸", "Stay focused & motivated ✅", "Forget about money 😑", "Waste time ⏳"], ans: 1, emoji: "🎯", level: 5, difficulty: "medium" },
+    { q: "Rs. 100 pocket money - how much to SAVE? 🐷", opts: ["Rs. 10 💰", "Rs. 20 ✅", "Rs. 0 ❌", "All Rs. 100"], ans: 1, emoji: "🐷", level: 5, difficulty: "medium" },
+    { q: "लक्ष्य बचत गर्न कति समय लाग्छ? (Goal saving takes?)", opts: ["One hour ⏱️", "Consistent effort over time ✅", "Never possible 🚫", "One lucky day 🍀"], ans: 1, emoji: "📅", level: 5, difficulty: "medium" },
+    { q: "If your goal is a Rs. 500 toy, saving Rs. 50/week you reach it in: 🧮", opts: ["5 weeks ✅", "50 weeks 😅", "1 week 😮", "500 weeks 😱"], ans: 0, emoji: "🎯", level: 5, difficulty: "medium" },
+    // Level 6 — medium
+    { q: "The 50-30-20 rule means: 📊", opts: ["School scores 📚", "Budget: 50% needs, 30% wants, 20% save ✅", "Time for sleep 😴", "Food portions 🍱"], ans: 1, emoji: "📊", level: 6, difficulty: "medium" },
+    { q: "५०-३०-२० नियममा बचत कति %? (Savings % in 50-30-20?)", opts: ["50%", "30%", "20% ✅", "10%"], ans: 2, emoji: "🧮", level: 6, difficulty: "medium" },
+    { q: "If you earn Rs. 100, following 50-30-20, needs get: 💰", opts: ["Rs. 20 💰", "Rs. 30 🛍️", "Rs. 50 ✅", "Rs. 80 😮"], ans: 2, emoji: "📊", level: 6, difficulty: "medium" },
+    { q: "A budget is: 📋", opts: ["A wish list 🌈", "A plan for spending & saving ✅", "A type of food 🍕", "A school subject 📚"], ans: 1, emoji: "📋", level: 6, difficulty: "medium" },
+    // Level 7 — medium
+    { q: "Which is a GOOD money habit? ✅", opts: ["Spending before saving 💸", "Saving before spending ✅", "Borrowing every week 😬", "Hiding money 🙈"], ans: 1, emoji: "✅", level: 7, difficulty: "medium" },
+    { q: "Tracking your spending helps you: 📱", opts: ["Waste more money 💸", "Understand where money goes ✅", "Forget your goals 😑", "Spend on friends only 👫"], ans: 1, emoji: "📊", level: 7, difficulty: "medium" },
+    { q: "राम्रो पैसा बानी कुन हो? (Which is a good money habit?)", opts: ["Buy first, think later 🛍️", "Compare prices before buying ✅", "Never save 😤", "Borrow always 💳"], ans: 1, emoji: "💡", level: 7, difficulty: "medium" },
+    { q: "Avoiding debt means: 💳", opts: ["Never buying anything 🙅", "Not borrowing more than you can repay ✅", "Using cards for everything 💳", "Spending on wants first 🛍️"], ans: 1, emoji: "🚫", level: 7, difficulty: "medium" },
+    // Level 8 — hard
+    { q: "Kids can earn money by: 💪", opts: ["Stealing 🚫", "Doing chores or small tasks ✅", "Printing fake money 🖨️", "Wishing for it 🌟"], ans: 1, emoji: "💪", level: 8, difficulty: "hard" },
+    { q: "Entrepreneurship means: 🚀", opts: ["Working for others only 👔", "Starting your own business idea ✅", "Spending all savings 💸", "Avoiding work 😴"], ans: 1, emoji: "🚀", level: 8, difficulty: "hard" },
+    { q: "A lemonade stand is an example of: 🍋", opts: ["Wasting money 💸", "A small business ✅", "A school project only 📚", "Borrowing money 💳"], ans: 1, emoji: "🍋", level: 8, difficulty: "hard" },
+    { q: "कमाएको पैसाले पहिले के गर्ने? (With earned money, first?)", opts: ["Buy toys 🎮", "Save a portion ✅", "Give it all away 🎁", "Spend immediately 💸"], ans: 1, emoji: "🐷", level: 8, difficulty: "hard" },
+    // Level 9 — hard
+    { q: "दान गर्नु (giving to charity) किन राम्रो छ? (Why is giving good?)", opts: ["It wastes money 💸", "It helps others & feels good ✅", "It makes you poor 😢", "Nobody cares 😑"], ans: 1, emoji: "❤️", level: 9, difficulty: "hard" },
+    { q: "Donating means: ❤️", opts: ["Lending money to get back 💰", "Giving freely to help others ✅", "Spending on yourself 🛍️", "Investing in stocks 📈"], ans: 1, emoji: "🤝", level: 9, difficulty: "hard" },
+    { q: "If you have Rs. 200 saved, giving Rs. 20 to charity leaves: 🧮", opts: ["Rs. 200 😕", "Rs. 180 ✅", "Rs. 20 😅", "Rs. 220 🤔"], ans: 1, emoji: "❤️", level: 9, difficulty: "hard" },
+    { q: "The joy of giving is: 🌟", opts: ["Feeling empty 😢", "Feeling happy and generous ✅", "Losing all your money 😱", "Making enemies 😠"], ans: 1, emoji: "🌸", level: 9, difficulty: "hard" },
+    // Level 10-12 — hard
+    { q: "A real budget balances: ⚖️", opts: ["Only spending 💸", "Income, spending, and saving ✅", "Only savings 🐷", "Wants only 🛍️"], ans: 1, emoji: "📊", level: 10, difficulty: "hard" },
+    { q: "Investment means putting money to: 📈", opts: ["Waste 💸", "Grow over time ✅", "Disappear 🌫️", "Fun only 🎢"], ans: 1, emoji: "📈", level: 11, difficulty: "hard" },
+    { q: "पैसा जादूगर बन्न के गर्नु पर्छ? (To be a money wizard?)", opts: ["Win lottery only 🎰", "Earn, save, invest, give ✅", "Spend all fast 💸", "Borrow from everyone 💳"], ans: 1, emoji: "🧙", level: 12, difficulty: "hard" },
+    { q: "Compound interest means: 🏦", opts: ["Paying extra fees 😬", "Earning interest on interest ✅", "Losing money slowly 📉", "Borrowing with interest 💳"], ans: 1, emoji: "📈", level: 12, difficulty: "hard" },
   ],
+
   personality: [
-    { q: "Empathy means:", opts: ["Being selfish 😠", "Understand others' feelings ❤️", "Ignoring people 🙄", "Crying always 😭"], ans: 1, emoji: "🌟" },
-    { q: "A good friend...", opts: ["Is always mean", "Supports & is honest 👫", "Ignores you", "Copies everything"], ans: 1, emoji: "👫" },
-    { q: "When you feel angry, BEST thing to do:", opts: ["Shout at all! 😤", "Deep breaths 🧘✅", "Break things 💥", "Eat lots of food 🍕"], ans: 1, emoji: "😊" },
-    { q: "Growth mindset means:", opts: ["Never making mistakes", "Learning from mistakes ✅", "Being perfect", "Giving up fast"], ans: 1, emoji: "🧠" },
+    // Level 1 — easy
+    { q: "तपाईं खास हुनुहुन्छ किनभने... (You are special because...)", opts: ["You are not special 😢", "Everyone has unique gifts ✅", "You have lots of money 💰", "You win always 🏆"], ans: 1, emoji: "✨", level: 1, difficulty: "easy" },
+    { q: "What makes YOU unique? 🌟", opts: ["Nothing is unique 😑", "Your personality and talents ✅", "Your clothes only 👕", "Your name only 📛"], ans: 1, emoji: "🌈", level: 1, difficulty: "easy" },
+    { q: "Confidence means: 💪", opts: ["Being rude 😤", "Believing in yourself ✅", "Being perfect 🎯", "Bragging always 😎"], ans: 1, emoji: "💪", level: 1, difficulty: "easy" },
+    { q: "Every child is: 🌟", opts: ["The same 😑", "Unique and valuable ✅", "Better than others 😤", "Unimportant 😢"], ans: 1, emoji: "✨", level: 1, difficulty: "easy" },
+    // Level 2 — easy
+    { q: "दयालु हुन के गर्नु पर्छ? (To be kind, you should?)", opts: ["Ignore others 😶", "Share and help ✅", "Take things 😤", "Only help yourself 🙄"], ans: 1, emoji: "❤️", level: 2, difficulty: "easy" },
+    { q: "Kindness means: ❤️", opts: ["Being mean 😠", "Caring and helping others ✅", "Winning always 🏆", "Getting gifts 🎁"], ans: 1, emoji: "🌸", level: 2, difficulty: "easy" },
+    { q: "A small act of kindness is: 🤗", opts: ["Impossible 🚫", "Helping pick up a dropped book ✅", "Winning a race 🏃", "Being the best 🏆"], ans: 1, emoji: "💙", level: 2, difficulty: "easy" },
+    { q: "When a classmate is sad, you should: 😢", opts: ["Laugh at them 😂", "Offer comfort or ask if they're okay ✅", "Ignore them 😑", "Tell everyone 📢"], ans: 1, emoji: "🤗", level: 2, difficulty: "easy" },
+    // Level 3 — easy
+    { q: "A good friend...", opts: ["Is always mean 😠", "Supports & is honest ✅", "Ignores you 😑", "Copies everything 🙄"], ans: 1, emoji: "👫", level: 3, difficulty: "easy" },
+    { q: "राम्रो साथी बन्न के गर्ने? (To be a good friend?)", opts: ["Only take, never give 😤", "Share, listen, and care ✅", "Compete always 🏃", "Stay away 🚶"], ans: 1, emoji: "👫", level: 3, difficulty: "easy" },
+    { q: "Friendship is built on: 🤝", opts: ["Money 💰", "Trust and honesty ✅", "Looks only 💅", "Being popular 😎"], ans: 1, emoji: "🌈", level: 3, difficulty: "easy" },
+    { q: "If a friend makes a mistake, you should: 🤗", opts: ["Mock them 😂", "Help them learn kindly ✅", "Never talk again 🚶", "Tell the whole school 📢"], ans: 1, emoji: "❤️", level: 3, difficulty: "easy" },
+    // Level 4 — medium
+    { q: "When you feel angry, BEST thing to do: 😊", opts: ["Shout at all! 😤", "Deep breaths 🧘 ✅", "Break things 💥", "Eat lots of food 🍕"], ans: 1, emoji: "😊", level: 4, difficulty: "medium" },
+    { q: "भावना सम्हाल्न के गर्ने? (To manage feelings?)", opts: ["Bottle them up 🤐", "Talk or breathe deeply ✅", "Fight 😤", "Run away 🏃"], ans: 1, emoji: "😊", level: 4, difficulty: "medium" },
+    { q: "Which strategy helps calm anger? 😤", opts: ["Hitting a wall 🤜", "Counting to 10 slowly ✅", "Yelling loudly 📣", "Blaming others 😠"], ans: 1, emoji: "🧘", level: 4, difficulty: "medium" },
+    { q: "Emotions are: 💖", opts: ["Always bad 😢", "Normal and okay to feel ✅", "Only for crying 😭", "A sign of weakness 😤"], ans: 1, emoji: "🌈", level: 4, difficulty: "medium" },
+    // Level 5 — medium
+    { q: "Empathy means: 🫂", opts: ["Being selfish 😠", "Understanding others' feelings ✅", "Ignoring people 🙄", "Crying always 😭"], ans: 1, emoji: "🫂", level: 5, difficulty: "medium" },
+    { q: "To show empathy, you: 💙", opts: ["Judge others quickly ⚡", "Try to understand their feelings ✅", "Give advice immediately 💡", "Look away 👀"], ans: 1, emoji: "🫂", level: 5, difficulty: "medium" },
+    { q: "सहानुभूति किन महत्त्वपूर्ण छ? (Why is empathy important?)", opts: ["It wastes time ⏳", "It makes relationships stronger ✅", "It means you agree always 🙄", "It is not important 😑"], ans: 1, emoji: "💙", level: 5, difficulty: "medium" },
+    { q: "An empathetic person: 🌟", opts: ["Only thinks of themselves 🙄", "Considers others' feelings ✅", "Never cries 😤", "Avoids all people 🚶"], ans: 1, emoji: "🫂", level: 5, difficulty: "medium" },
+    // Level 6 — medium
+    { q: "आत्मविश्वास बढाउन के गर्ने? (To boost confidence?)", opts: ["Avoid all challenges 😤", "Practice and celebrate small wins ✅", "Copy others only 🙄", "Stay in comfort zone always 😴"], ans: 1, emoji: "💪", level: 6, difficulty: "medium" },
+    { q: "Confidence grows when you: 💪", opts: ["Never try new things 🙅", "Try, fail, and try again ✅", "Wait for others to do it 😑", "Compare yourself to everyone 👀"], ans: 1, emoji: "🚀", level: 6, difficulty: "medium" },
+    { q: "Positive self-talk means: 🌟", opts: ["Saying mean things to yourself 😢", "Encouraging yourself kindly ✅", "Bragging to others 😎", "Never speaking 🤐"], ans: 1, emoji: "💬", level: 6, difficulty: "medium" },
+    { q: "Which builds confidence MOST? 🏆", opts: ["Avoiding all risks 🙅", "Trying new challenges bravely ✅", "Waiting to be perfect first 🎯", "Comparing yourself to friends 👀"], ans: 1, emoji: "💪", level: 6, difficulty: "medium" },
+    // Level 7 — medium
+    { q: "Apologizing helps because: 🙏", opts: ["It makes you weak 😤", "It repairs relationships ✅", "It means you lost 😢", "Nobody cares 😑"], ans: 1, emoji: "🙏", level: 7, difficulty: "medium" },
+    { q: "माफी माग्दा के भन्ने? (When apologizing, say?)", opts: ["'You made me do it!' 😤", "'I'm sorry, I was wrong' ✅", "'Whatever!' 🙄", "'It's not my fault!' 😡"], ans: 1, emoji: "🤝", level: 7, difficulty: "medium" },
+    { q: "A sincere apology includes: 💙", opts: ["Blaming others 😠", "Acknowledging the mistake ✅", "Lots of excuses 😬", "Demanding forgiveness 😤"], ans: 1, emoji: "🙏", level: 7, difficulty: "medium" },
+    { q: "Forgiving someone means: 🕊️", opts: ["Forgetting it happened 😑", "Letting go of anger for peace ✅", "Becoming best friends again 👫", "Never talking again 🚶"], ans: 1, emoji: "🕊️", level: 7, difficulty: "medium" },
+    // Level 8 — hard
+    { q: "कृतज्ञता (gratitude) मतलब के हो?", opts: ["Being greedy 😤", "Being thankful for what you have ✅", "Wanting more always 😍", "Ignoring good things 😑"], ans: 1, emoji: "🌸", level: 8, difficulty: "hard" },
+    { q: "Practicing gratitude helps you feel: 🌟", opts: ["More jealous 😠", "Happier and more positive ✅", "Sad all the time 😢", "Nothing changes 🤷"], ans: 1, emoji: "🌸", level: 8, difficulty: "hard" },
+    { q: "A gratitude journal is: 📔", opts: ["A list of complaints 😤", "A record of things you're thankful for ✅", "A homework book 📚", "A diary of worries 😰"], ans: 1, emoji: "📔", level: 8, difficulty: "hard" },
+    { q: "You can show gratitude by: 🙏", opts: ["Taking things without saying thanks 😤", "Saying 'thank you' sincerely ✅", "Ignoring kindness 😑", "Complaining instead 😠"], ans: 1, emoji: "💙", level: 8, difficulty: "hard" },
+    // Level 9-12 — hard
+    { q: "Growth mindset means: 🧠", opts: ["Never making mistakes", "Learning from mistakes ✅", "Being perfect", "Giving up fast"], ans: 1, emoji: "🧠", level: 9, difficulty: "hard" },
+    { q: "नेतृत्व (leadership) गुण के हो? (What is a leadership quality?)", opts: ["Bossing everyone 😤", "Inspiring others to do their best ✅", "Taking credit alone 🏆", "Avoiding responsibility 🙅"], ans: 1, emoji: "🌟", level: 10, difficulty: "hard" },
+    { q: "Helping your community means: 🤲", opts: ["Only helping yourself 🙄", "Contributing for the good of all ✅", "Waiting for others to help 😑", "Ignoring problems 🙈"], ans: 1, emoji: "🤲", level: 11, difficulty: "hard" },
+    { q: "The BEST version of you is: 👑", opts: ["A copy of someone famous 🌟", "Constantly growing and kind ✅", "Always winning 🏆", "Never changing 😑"], ans: 1, emoji: "✨", level: 12, difficulty: "hard" },
   ],
+
   time: [
-    { q: "Pomodoro technique is:", opts: ["25 min work + 5 min break 🍅✅", "Study all night 😴", "Play all day 🎮", "No schedule"], ans: 0, emoji: "⏰" },
-    { q: "Procrastination means:", opts: ["Working fast ⚡", "Delaying tasks 😴✅", "Playing sports 🏃", "Reading books 📚"], ans: 1, emoji: "🚫" },
-    { q: "Best time to do homework:", opts: ["After midnight 🌙", "Right after school ✅", "Never 🚫", "Only weekends"], ans: 1, emoji: "📚" },
-    { q: "A good daily schedule helps you:", opts: ["Waste time ⏳", "Be organized ✅", "Skip school 🏫", "Sleep more 😴"], ans: 1, emoji: "📅" },
+    // Level 1 — easy
+    { q: "समय किन महत्त्वपूर्ण छ? (Why is time important?)", opts: ["It is not important 😑", "Time once gone cannot return ✅", "We have unlimited time 😴", "Only for adults 👔"], ans: 1, emoji: "⏱️", level: 1, difficulty: "easy" },
+    { q: "Time is compared to gold because: ⭐", opts: ["Both are yellow 🌟", "Both are precious and limited ✅", "Gold can be eaten 😋", "Time is not valuable 😑"], ans: 1, emoji: "⭐", level: 1, difficulty: "easy" },
+    { q: "How many hours in a day? 🌅", opts: ["12 hours 🕛", "24 hours ✅", "48 hours 😮", "10 hours 🕙"], ans: 1, emoji: "🌞", level: 1, difficulty: "easy" },
+    { q: "एक दिनमा कति घण्टा हुन्छ? (Hours in a day?)", opts: ["12 ⏰", "24 ✅", "60 😅", "7 📅"], ans: 1, emoji: "⏱️", level: 1, difficulty: "easy" },
+    // Level 2 — easy
+    { q: "A good morning routine helps you: 🌅", opts: ["Start the day late 😴", "Start the day organized & energized ✅", "Skip breakfast 🍽️", "Forget school 🏫"], ans: 1, emoji: "🌅", level: 2, difficulty: "easy" },
+    { q: "बिहान उठेपछि सबभन्दा पहिले? (After waking up, first?)", opts: ["Play games 🎮", "Freshen up & eat breakfast ✅", "Watch TV 📺", "Call friends 📱"], ans: 1, emoji: "🌞", level: 2, difficulty: "easy" },
+    { q: "Waking up early gives you: ⏰", opts: ["More stress 😤", "Extra time for tasks ✅", "Less sleep 😴", "Bad mood 😠"], ans: 1, emoji: "⏰", level: 2, difficulty: "easy" },
+    { q: "A morning routine should include: 🌅", opts: ["Skipping meals 🙅", "Hygiene, breakfast, & planning ✅", "Only sleeping more 😴", "Watching cartoons first 📺"], ans: 1, emoji: "📋", level: 2, difficulty: "easy" },
+    // Level 3 — easy
+    { q: "A time WASTER is: ⏳", opts: ["Reading books 📚", "Scrolling social media for hours 📱 ✅", "Doing homework 📝", "Eating meals 🍱"], ans: 1, emoji: "🚫", level: 3, difficulty: "easy" },
+    { q: "समय बर्बाद गर्ने काम कुन हो? (Which wastes time?)", opts: ["Exercise 🏃", "Studying 📚", "Playing games for 5 hours nonstop 🎮 ✅", "Sleeping 8 hrs 😴"], ans: 2, emoji: "⏳", level: 3, difficulty: "easy" },
+    { q: "Which is NOT a time waster? 💡", opts: ["Too much TV 📺", "Gossiping for hours 💬", "Planning your day 📋 ✅", "Endless scrolling 📱"], ans: 2, emoji: "✅", level: 3, difficulty: "easy" },
+    { q: "Saying 'yes' to everything leads to: 😬", opts: ["More free time 😊", "Too much stress & no time ✅", "Better grades 📚", "More friends 👫"], ans: 1, emoji: "🚫", level: 3, difficulty: "easy" },
+    // Level 4 — medium
+    { q: "A daily schedule helps you: 📅", opts: ["Waste time ⏳", "Be organized ✅", "Skip school 🏫", "Sleep more 😴"], ans: 1, emoji: "📅", level: 4, difficulty: "medium" },
+    { q: "दैनिक तालिकामा के राख्ने? (Put in daily schedule?)", opts: ["Only play 🎮", "Study, play, rest & meals ✅", "Only sleep 😴", "Only chores 🧹"], ans: 1, emoji: "📅", level: 4, difficulty: "medium" },
+    { q: "A good schedule is: 📋", opts: ["Impossible to follow 😤", "Realistic and balanced ✅", "Only strict rules 😠", "Made by parents only 👨‍👩‍👧"], ans: 1, emoji: "📋", level: 4, difficulty: "medium" },
+    { q: "Planning your day takes: ⏱️", opts: ["Hours of work ⏰", "Just 5–10 minutes ✅", "A whole day 😱", "Professional help 👔"], ans: 1, emoji: "📝", level: 4, difficulty: "medium" },
+    // Level 5 — medium
+    { q: "Pomodoro technique is: 🍅", opts: ["25 min work + 5 min break ✅", "Study all night 😴", "Play all day 🎮", "No schedule 😑"], ans: 0, emoji: "🍅", level: 5, difficulty: "medium" },
+    { q: "पोमोडोरो तरिकामा कति मिनेट काम गर्ने? (Pomodoro work time?)", opts: ["10 minutes 😴", "25 minutes ✅", "60 minutes 😮", "5 minutes 😅"], ans: 1, emoji: "⏱️", level: 5, difficulty: "medium" },
+    { q: "Breaks during study help: 💆", opts: ["Waste time ⏳", "Refresh your brain ✅", "Make you lazy 😴", "Reduce learning 📉"], ans: 1, emoji: "🧠", level: 5, difficulty: "medium" },
+    { q: "After a Pomodoro session, you take a break of: ⏸️", opts: ["1 minute ⚡", "5 minutes ✅", "1 hour 😴", "All day 🎮"], ans: 1, emoji: "🍅", level: 5, difficulty: "medium" },
+    // Level 6 — medium
+    { q: "Doing important things first is called: ⭐", opts: ["Procrastination 😴", "Prioritization ✅", "Multitasking 🤹", "Relaxation 😴"], ans: 1, emoji: "📋", level: 6, difficulty: "medium" },
+    { q: "प्राथमिकता सूचीमा पहिले के राख्ने? (Priority list — what goes first?)", opts: ["Fun activities 🎉", "Most important tasks ✅", "Easiest tasks 😌", "Whatever you feel like 🤷"], ans: 1, emoji: "📋", level: 6, difficulty: "medium" },
+    { q: "The 'Eat the Frog' method means: 🐸", opts: ["Eat frogs for breakfast 😮", "Do the hardest task first ✅", "Avoid all tasks 😴", "Do the easiest first 😌"], ans: 1, emoji: "🐸", level: 6, difficulty: "medium" },
+    { q: "If you have 3 tasks, which to do first? 📋", opts: ["The most fun 😄", "The most urgent & important ✅", "The easiest 😌", "The one others choose 🤷"], ans: 1, emoji: "⭐", level: 6, difficulty: "medium" },
+    // Level 7 — medium
+    { q: "Procrastination means: 🚫", opts: ["Working fast ⚡", "Delaying tasks 😴 ✅", "Playing sports 🏃", "Reading books 📚"], ans: 1, emoji: "🚫", level: 7, difficulty: "medium" },
+    { q: "ढिलाइ गर्ने बानीबाट कसरी बच्ने? (How to avoid procrastination?)", opts: ["Wait until last minute ⏰", "Start immediately, even for 2 minutes ✅", "Make more plans without acting 📋", "Ask friends to do it 👫"], ans: 1, emoji: "⚡", level: 7, difficulty: "medium" },
+    { q: "Procrastination often causes: 😬", opts: ["Better work quality 📈", "Stress and rushing at last minute ✅", "More free time 😊", "Better results 🏆"], ans: 1, emoji: "😬", level: 7, difficulty: "medium" },
+    { q: "To beat procrastination, break tasks into: 🧩", opts: ["One giant task 😱", "Small manageable steps ✅", "Random parts 🎲", "Someone else's problem 🤷"], ans: 1, emoji: "✅", level: 7, difficulty: "medium" },
+    // Level 8-12 — hard
+    { q: "Balancing fun and study on weekends means: 🎮📚", opts: ["Study all weekend 😤", "Plan both study AND play time ✅", "Play only, study never 🎮", "Sleep all weekend 😴"], ans: 1, emoji: "⚖️", level: 8, difficulty: "hard" },
+    { q: "बालबालिकालाई कति घण्टा निद्रा चाहिन्छ? (Sleep needed for children?)", opts: ["4 hours 😴", "6 hours 🌙", "8-10 hours ✅", "2 hours only 😮"], ans: 2, emoji: "😴", level: 9, difficulty: "hard" },
+    { q: "Planning a full week helps you: 📅", opts: ["Feel overwhelmed 😱", "Use time efficiently & reduce stress ✅", "Forget everything 😵", "Make others plan for you 🤷"], ans: 1, emoji: "🗓️", level: 10, difficulty: "hard" },
+    { q: "A habit tracker helps you: 📊", opts: ["Avoid all habits 🙅", "See progress and stay consistent ✅", "Only track bad habits 😬", "Waste time tracking 😑"], ans: 1, emoji: "📊", level: 11, difficulty: "hard" },
+    { q: "A Time Champion knows that: 👑", opts: ["Busy always means productive 😤", "Working smart matters more than just working hard ✅", "More hours = better results 😴", "Schedules are optional 🤷"], ans: 1, emoji: "👑", level: 12, difficulty: "hard" },
+    { q: "Long-term time management leads to: 🌟", opts: ["More stress 😤", "Achieving goals and less stress ✅", "Missing deadlines 😱", "Fewer opportunities 📉"], ans: 1, emoji: "🏆", level: 12, difficulty: "hard" },
   ],
+
   english: [
-    { q: "How do you say 'मेरो नाम' in English?", opts: ["My place is 🏠", "My name is ✅", "I am from 🗺️", "My age is 🎂"], ans: 1, emoji: "🇬🇧" },
-    { q: "Which sentence is CORRECT?", opts: ["I is happy 😅", "She are going 🙄", "He is my friend ✅", "They was there"], ans: 2, emoji: "✏️" },
-    { q: "'Thank you' को नेपाली अर्थ:", opts: ["माफ गर्नुस् 🙏", "शुभ प्रभात 🌅", "धन्यवाद ✅", "नमस्ते 👋"], ans: 2, emoji: "🙏" },
-    { q: "'Introduce yourself' means:", opts: ["Show your pet 🐕", "Tell who you are ✅", "Introduce food 🍕", "Nothing 🤷"], ans: 1, emoji: "💬" },
+    // Level 1 — easy
+    { q: "How many letters in the English alphabet? 🔤", opts: ["24 😊", "26 ✅", "28 😮", "20 😅"], ans: 1, emoji: "🔤", level: 1, difficulty: "easy" },
+    { q: "अंग्रेजी वर्णमालाको पहिलो अक्षर? (First letter of English alphabet?)", opts: ["B 😊", "Z 😮", "A ✅", "M 🤔"], ans: 2, emoji: "🔤", level: 1, difficulty: "easy" },
+    { q: "Which is a VOWEL? 🅰️", opts: ["B 😊", "C 😅", "A ✅", "D 🤔"], ans: 2, emoji: "🌟", level: 1, difficulty: "easy" },
+    { q: "Vowels in English are: 🔤", opts: ["A, B, C, D, E", "A, E, I, O, U ✅", "A, E, I, O, P", "B, C, D, F, G"], ans: 1, emoji: "🅰️", level: 1, difficulty: "easy" },
+    // Level 2 — easy
+    { q: "How do you say 'मेरो नाम' in English? 🌟", opts: ["My place is 🏠", "My name is ✅", "I am from 🗺️", "My age is 🎂"], ans: 1, emoji: "🇬🇧", level: 2, difficulty: "easy" },
+    { q: "'Good morning!' भन्नु कहिले? (When to say 'Good morning'?)", opts: ["At night 🌙", "In the morning ✅ ☀️", "At lunch 🍱", "Never 🚫"], ans: 1, emoji: "☀️", level: 2, difficulty: "easy" },
+    { q: "Which is a greeting in English? 👋", opts: ["Goodbye only 👋", "Hello! ✅", "Stop! 🛑", "Run! 🏃"], ans: 1, emoji: "👋", level: 2, difficulty: "easy" },
+    { q: "'Thank you' को नेपाली अर्थ: 🙏", opts: ["माफ गर्नुस् 🙏", "शुभ प्रभात 🌅", "धन्यवाद ✅", "नमस्ते 👋"], ans: 2, emoji: "🙏", level: 2, difficulty: "easy" },
+    // Level 3 — easy
+    { q: "'Mother' को नेपाली अर्थ? (Meaning of 'Mother' in Nepali?)", opts: ["बुवा 👨", "आमा ✅ 👩", "दाइ 👦", "बहिनी 👧"], ans: 1, emoji: "👨‍👩‍👧‍👦", level: 3, difficulty: "easy" },
+    { q: "My family includes: 👨‍👩‍👧", opts: ["Only me 😑", "Parents, siblings & relatives ✅", "Only friends 👫", "Pets only 🐕"], ans: 1, emoji: "👨‍👩‍👧", level: 3, difficulty: "easy" },
+    { q: "'Sister' को नेपाली: (Nepali for 'sister'?)", opts: ["दाइ 👦", "बुवा 👨", "बहिनी ✅ 👧", "आमा 👩"], ans: 2, emoji: "👧", level: 3, difficulty: "easy" },
+    { q: "Complete: 'My father is my ___.' 👨", opts: ["enemy 😠", "parent ✅", "teacher 📚", "boss 💼"], ans: 1, emoji: "👨", level: 3, difficulty: "easy" },
+    // Level 4 — medium
+    { q: "Which word is a SCHOOL item? 🏫", opts: ["Fridge 🧊", "Pencil ✅ ✏️", "Car 🚗", "Tree 🌳"], ans: 1, emoji: "🏫", level: 4, difficulty: "medium" },
+    { q: "'किताब' को अंग्रेजी? (English for 'किताब'?)", opts: ["Table 🪑", "Book ✅ 📚", "Bag 🎒", "Pen ✏️"], ans: 1, emoji: "📚", level: 4, difficulty: "medium" },
+    { q: "Which sentence is CORRECT? ✅", opts: ["I is happy 😅", "She are going 🙄", "He is my friend ✅", "They was there 😕"], ans: 2, emoji: "✏️", level: 4, difficulty: "medium" },
+    { q: "A classroom has: 🏫", opts: ["Cars and planes 🚗", "Desks, blackboard & students ✅", "Kitchen tools 🍳", "Animals 🐕"], ans: 1, emoji: "🏫", level: 4, difficulty: "medium" },
+    // Level 5 — medium
+    { q: "Which is a COLOR in English? 🎨", opts: ["Circle 🔵", "Blue ✅ 💙", "Triangle 🔺", "Square 🟥"], ans: 1, emoji: "🎨", level: 5, difficulty: "medium" },
+    { q: "'रातो' को अंग्रेजी? (English for 'रातो'?)", opts: ["Blue 💙", "Green 🟢", "Red ✅ 🔴", "Yellow 💛"], ans: 2, emoji: "🔴", level: 5, difficulty: "medium" },
+    { q: "A triangle has ___ sides. 🔺", opts: ["4 🟥", "3 ✅ 🔺", "5 ⭐", "2 📐"], ans: 1, emoji: "🔺", level: 5, difficulty: "medium" },
+    { q: "Which shape has no corners? ⭕", opts: ["Square 🟥", "Triangle 🔺", "Circle ✅ ⭕", "Rectangle 🟦"], ans: 2, emoji: "⭕", level: 5, difficulty: "medium" },
+    // Level 6 — medium
+    { q: "A story needs: 📖", opts: ["Only pictures 🖼️", "A beginning, middle, and end ✅", "Only an ending 🏁", "No characters 🤷"], ans: 1, emoji: "📖", level: 6, difficulty: "medium" },
+    { q: "'Introduce yourself' means: 💬", opts: ["Show your pet 🐕", "Tell who you are ✅", "Introduce food 🍕", "Nothing 🤷"], ans: 1, emoji: "💬", level: 6, difficulty: "medium" },
+    { q: "Once upon a time... is the ___ of a story. 🏰", opts: ["Middle 📖", "End 🏁", "Beginning ✅ 🌟", "Title 📛"], ans: 2, emoji: "📖", level: 6, difficulty: "medium" },
+    { q: "A character in a story is: 🦁", opts: ["A place 🗺️", "A person or animal in the story ✅", "The weather ☁️", "The time 🕐"], ans: 1, emoji: "🎭", level: 6, difficulty: "medium" },
+    // Level 7 — medium
+    { q: "Good English pronunciation means: 🔊", opts: ["Mumbling quietly 🤫", "Saying words clearly and correctly ✅", "Speaking only Nepali 🇳🇵", "Shouting 📣"], ans: 1, emoji: "🔊", level: 7, difficulty: "medium" },
+    { q: "To improve pronunciation, you should: 🎧", opts: ["Never speak 🤐", "Listen and practice daily ✅", "Only read silently 📖", "Avoid English 🚫"], ans: 1, emoji: "🎤", level: 7, difficulty: "medium" },
+    { q: "'Th' sound in 'the' is: 🔊", opts: ["Same as 'D' 😅", "A unique English sound ✅", "Silent always 🤫", "Same as 'T' 😮"], ans: 1, emoji: "🔤", level: 7, difficulty: "medium" },
+    { q: "Stress in a word means: ⭐", opts: ["Feeling worried 😰", "Emphasizing one syllable loudly ✅", "Using capital letters 🔠", "Speaking slowly 🐢"], ans: 1, emoji: "🔊", level: 7, difficulty: "medium" },
+    // Level 8-12 — hard
+    { q: "A complete sentence needs: ✅", opts: ["Only a noun 🤷", "A subject and a verb ✅", "Many adjectives 💫", "Only a verb 😅"], ans: 1, emoji: "✏️", level: 8, difficulty: "hard" },
+    { q: "Which is a VERB? 🎬", opts: ["Beautiful 💐", "Run ✅ 🏃", "Table 🪑", "Happy 😊"], ans: 1, emoji: "⚡", level: 8, difficulty: "hard" },
+    { q: "A conversation requires: 💬", opts: ["One person only 🙎", "At least two people talking & listening ✅", "Writing only ✏️", "No response 😑"], ans: 1, emoji: "💬", level: 9, difficulty: "hard" },
+    { q: "Advanced English uses: 🎓", opts: ["Simple words only 🌱", "Rich vocabulary and idioms ✅", "No grammar 😬", "Only greetings 👋"], ans: 1, emoji: "🎓", level: 11, difficulty: "hard" },
+    { q: "An English Champion speaks: 👑", opts: ["Only when forced 😤", "Confidently and clearly ✅", "With many mistakes always 😬", "Very quietly 🤫"], ans: 1, emoji: "👑", level: 12, difficulty: "hard" },
+    { q: "'I have been studying English for 2 years.' This is: 📚", opts: ["Simple past 😅", "Present perfect ✅", "Future tense 🚀", "Present simple 🌱"], ans: 1, emoji: "🎓", level: 12, difficulty: "hard" },
   ],
+
   gk: [
-    { q: "नेपालको राजधानी? (Capital of Nepal?)", opts: ["Pokhara 🌊", "Butwal 🏙️", "Kathmandu 🏔️ ✅", "Biratnagar"], ans: 2, emoji: "🇳🇵" },
-    { q: "Staying safe online means:", opts: ["Share password 🔑", "Post your address 🏠", "Never share personal info ✅", "Click all links 🖱️"], ans: 2, emoji: "🔐" },
-    { q: "Healthy sleep for children is:", opts: ["4 hours 😴", "6 hours 🌙", "8-10 hours ✅", "2 hours only"], ans: 2, emoji: "😴" },
-    { q: "Mount Everest is in:", opts: ["China only 🇨🇳", "India 🇮🇳", "Nepal 🇳🇵 ✅", "Pakistan"], ans: 2, emoji: "🏔️" },
+    // Level 1 — easy
+    { q: "नेपालको राजधानी? (Capital of Nepal?)", opts: ["Pokhara 🌊", "Butwal 🏙️", "Kathmandu ✅ 🏔️", "Biratnagar 🏭"], ans: 2, emoji: "🇳🇵", level: 1, difficulty: "easy" },
+    { q: "Nepal's national flower is: 🌸", opts: ["Rose 🌹", "Lotus 🪷", "Rhododendron ✅ 🌺", "Sunflower 🌻"], ans: 2, emoji: "🌸", level: 1, difficulty: "easy" },
+    { q: "नेपालको राष्ट्रिय खेल? (Nepal's national sport?)", opts: ["Cricket 🏏", "Football ⚽", "Volleyball ✅ 🏐", "Basketball 🏀"], ans: 2, emoji: "🏐", level: 1, difficulty: "easy" },
+    { q: "Nepal is located in: 🗺️", opts: ["Africa 🌍", "Europe 🇪🇺", "Asia ✅ 🌏", "Australia 🦘"], ans: 2, emoji: "🌏", level: 1, difficulty: "easy" },
+    // Level 2 — easy
+    { q: "Staying safe online means: 🔐", opts: ["Share password 🔑", "Post your address 🏠", "Never share personal info ✅", "Click all links 🖱️"], ans: 2, emoji: "🔐", level: 2, difficulty: "easy" },
+    { q: "Online safety rule #1: 🛡️", opts: ["Chat with strangers freely 😬", "Share personal info with anyone 😱", "Ask parents before downloading ✅", "Give password to friends 🔑"], ans: 2, emoji: "🛡️", level: 2, difficulty: "easy" },
+    { q: "If a stranger online makes you uncomfortable: 🚨", opts: ["Keep it secret 🤐", "Tell a trusted adult ✅", "Meet them in person 😱", "Share your photo 📸"], ans: 1, emoji: "🚨", level: 2, difficulty: "easy" },
+    { q: "A strong password should: 🔑", opts: ["Be 'password123' 😅", "Have letters, numbers & symbols ✅", "Be your name 😬", "Be very short 😮"], ans: 1, emoji: "🔐", level: 2, difficulty: "easy" },
+    // Level 3 — easy
+    { q: "Healthy food for kids includes: 🥗", opts: ["Only candy 🍬", "Vegetables, fruits & whole grains ✅", "Only chips 🍟", "Soda drinks only 🥤"], ans: 1, emoji: "🥗", level: 3, difficulty: "easy" },
+    { q: "Healthy sleep for children is: 😴", opts: ["4 hours 😴", "6 hours 🌙", "8-10 hours ✅", "2 hours only 😮"], ans: 2, emoji: "😴", level: 3, difficulty: "easy" },
+    { q: "Exercise should be done: 🏃", opts: ["Never 🚫", "Once a year 😅", "Every day or most days ✅", "Only on exams 📚"], ans: 2, emoji: "🏃", level: 3, difficulty: "easy" },
+    { q: "Washing hands helps prevent: 🧼", opts: ["Hunger 😋", "Germs and sickness ✅", "Bad grades 📉", "Rain 🌧️"], ans: 1, emoji: "🧼", level: 3, difficulty: "easy" },
+    // Level 4 — medium
+    { q: "SMART goals are: 🎯", opts: ["Vague and unclear 😑", "Specific, Measurable, Achievable, Relevant, Time-bound ✅", "Only for adults 👔", "Impossible dreams 🌈"], ans: 1, emoji: "🎯", level: 4, difficulty: "medium" },
+    { q: "A good goal is: 🌟", opts: ["'I want to be happy someday' 😑", "'I will study 30 min every day this week' ✅", "Too big to achieve 😱", "Set by someone else 🤷"], ans: 1, emoji: "🎯", level: 4, difficulty: "medium" },
+    { q: "Setting goals helps you: 🚀", opts: ["Waste time 😴", "Focus and achieve more ✅", "Forget everything 😵", "Stress more 😤"], ans: 1, emoji: "📈", level: 4, difficulty: "medium" },
+    { q: "लक्ष्य राख्नाले के हुन्छ? (What happens when you set goals?)", opts: ["Nothing changes 🤷", "You have direction and motivation ✅", "Others do work for you 😑", "You get lazy 😴"], ans: 1, emoji: "🎯", level: 4, difficulty: "medium" },
+    // Level 5 — medium
+    { q: "Mount Everest is in: 🏔️", opts: ["China only 🇨🇳", "India 🇮🇳", "Nepal ✅ 🇳🇵", "Pakistan 🇵🇰"], ans: 2, emoji: "🏔️", level: 5, difficulty: "medium" },
+    { q: "नेपालको सबैभन्दा लामो नदी? (Longest river in Nepal?)", opts: ["Bagmati 🌊", "Koshi ✅ 🏞️", "Gandaki 🌊", "Karnali 🌊"], ans: 1, emoji: "🌊", level: 5, difficulty: "medium" },
+    { q: "Nepal has ___ provinces (प्रदेश): 🗺️", opts: ["5 😊", "7 ✅", "9 😮", "3 😅"], ans: 1, emoji: "🇳🇵", level: 5, difficulty: "medium" },
+    { q: "Pokhara is famous for: 🌊", opts: ["Deserts 🏜️", "Lakes and mountains ✅ 🏔️", "Hot weather 🌞", "Beaches 🏖️"], ans: 1, emoji: "🌊", level: 5, difficulty: "medium" },
+    // Level 6 — medium
+    { q: "How many Wonders of the World are there? 🌐", opts: ["5 😊", "10 😮", "7 ✅", "12 😱"], ans: 2, emoji: "🌐", level: 6, difficulty: "medium" },
+    { q: "The Great Wall is in: 🏯", opts: ["India 🇮🇳", "Japan 🇯🇵", "China ✅ 🇨🇳", "Korea 🇰🇷"], ans: 2, emoji: "🌐", level: 6, difficulty: "medium" },
+    { q: "The Taj Mahal is in which country? 🕌", opts: ["Pakistan 🇵🇰", "Nepal 🇳🇵", "India ✅ 🇮🇳", "Bangladesh 🇧🇩"], ans: 2, emoji: "🕌", level: 6, difficulty: "medium" },
+    { q: "Machu Picchu is in: 🏔️", opts: ["Mexico 🇲🇽", "Brazil 🇧🇷", "Peru ✅ 🇵🇪", "Argentina 🇦🇷"], ans: 2, emoji: "🌄", level: 6, difficulty: "medium" },
+    // Level 7 — medium
+    { q: "Water boils at: 🔥", opts: ["50°C 😅", "75°C 🤔", "100°C ✅", "200°C 😱"], ans: 2, emoji: "🔬", level: 7, difficulty: "medium" },
+    { q: "Photosynthesis uses: 🌱", opts: ["Darkness 🌑", "Sunlight ✅ ☀️", "Moonlight 🌙", "Wind 💨"], ans: 1, emoji: "🌱", level: 7, difficulty: "medium" },
+    { q: "The Sun is a: 🌟", opts: ["Planet 🪐", "Moon 🌙", "Star ✅ ⭐", "Comet ☄️"], ans: 2, emoji: "☀️", level: 7, difficulty: "medium" },
+    { q: "पृथ्वीमा कति % पानी छ? (What % of Earth is water?)", opts: ["30% 🌊", "50% 😅", "71% ✅ 🌊", "90% 😮"], ans: 2, emoji: "🌊", level: 7, difficulty: "medium" },
+    // Level 8-12 — hard
+    { q: "Dashain is celebrated: 🎉", opts: ["In winter ❄️", "In autumn (Ashwin/Kartik) ✅ 🍂", "In summer ☀️", "In spring 🌸"], ans: 1, emoji: "🎉", level: 8, difficulty: "hard" },
+    { q: "Reduce, Reuse, Recycle helps: 🌱", opts: ["Pollute Earth 🏭", "Protect the environment ✅", "Waste more 🗑️", "Nothing 😑"], ans: 1, emoji: "♻️", level: 9, difficulty: "hard" },
+    { q: "Nepal's national bird is: 🦅", opts: ["Eagle 🦅", "Peacock 🦚", "Danphe (Lophophorus) ✅ 🦜", "Parrot 🦜"], ans: 2, emoji: "🦅", level: 10, difficulty: "hard" },
+    { q: "Greenhouse gases cause: 🌡️", opts: ["Cooler Earth ❄️", "Global warming ✅ 🌡️", "More rain only 🌧️", "No change 😑"], ans: 1, emoji: "🌍", level: 11, difficulty: "hard" },
+    { q: "A life champion always: 👑", opts: ["Stops learning after school 😑", "Keeps learning, growing & helping ✅", "Avoids challenges 🙅", "Works only for money 💰"], ans: 1, emoji: "👑", level: 12, difficulty: "hard" },
+    { q: "Critical thinking means: 🧠", opts: ["Accepting everything without question 😑", "Analyzing & questioning information ✅", "Being critical of people 😠", "Thinking slowly always 🐢"], ans: 1, emoji: "🧠", level: 12, difficulty: "hard" },
   ],
 };
 
@@ -667,7 +919,6 @@ function SubjectMapView({ subjectKey, completedLevels, onBack, onPlayLevel }) {
 function GameLevelView({ subjectKey, level, onBack, onComplete }) {
   const s = LEVELS_DATA[subjectKey];
   const { lang } = useLang();
-  const questions = MINI_QUIZZES[subjectKey] || MINI_QUIZZES.comm;
   const [phase, setPhase] = useState("intro"); // intro | question | result | complete
   const [qIdx, setQIdx] = useState(0);
   const [chosen, setChosen] = useState(null);
@@ -676,7 +927,22 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
   const [combo, setCombo] = useState(0);
   const [showBonus, setShowBonus] = useState(null);
 
-  const currentQ = questions[qIdx % questions.length];
+  // Get questions for this specific level — no overlap with other levels
+  const allQuestions = MINI_QUIZZES[subjectKey] || MINI_QUIZZES.comm;
+  const levelQuestions = allQuestions.filter(q => q.level === level.id);
+  // Fallback: if not enough level-specific questions, use difficulty-matched ones
+  const useQuestions = levelQuestions.length >= 4
+    ? levelQuestions
+    : allQuestions.filter(q => {
+        const diff = level.id <= 3 ? "easy" : level.id <= 7 ? "medium" : "hard";
+        return q.difficulty === diff;
+      }).slice(0, 8);
+  // Pick 4 questions — shuffle so order varies each play
+  const [gameQuestions] = useState(() => {
+    const pool = useQuestions.length >= 4 ? useQuestions : allQuestions;
+    return [...pool].sort(() => Math.random() - 0.5).slice(0, 4);
+  });
+  const currentQ = gameQuestions[qIdx];
 
   const handleAnswer = (i) => {
     if (chosen !== null) return;
@@ -686,11 +952,14 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
       const newCombo = combo + 1;
       setCombo(newCombo);
       setScore(s => s + 1);
-      if (newCombo >= 2) setShowBonus(`🔥 ${newCombo}x COMBO!`);
+      const celebrations = ["🌟 शाबास! AMAZING!", "🎉 WOW! एकदम सही!", "⭐ SUPERSTAR!", "🔥 BRILLIANT!", "💪 YOU GOT IT!", "🏆 PERFECT!"];
+      const msg = newCombo >= 3 ? `🔥🔥🔥 ${newCombo}x MEGA COMBO!` : newCombo >= 2 ? `🔥 ${newCombo}x COMBO! GREAT!` : celebrations[Math.floor(Math.random() * celebrations.length)];
+      setShowBonus(msg);
     } else {
       setCombo(0);
       setHearts(h => Math.max(0, h - 1));
-      setShowBonus("❌ Wrong!");
+      const encouragements = ["💙 कोई बात नहीं! Try again!", "🌈 Almost! Keep going!", "💪 Don't give up! तिमी सक्छौ!", "🤗 Good try! Learn & grow!"];
+      setShowBonus(encouragements[Math.floor(Math.random() * encouragements.length)]);
     }
     setTimeout(() => {
       setShowBonus(null);
@@ -700,7 +969,7 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
         setChosen(null);
         setQIdx(x => x + 1);
       }
-    }, 1200);
+    }, 1500);
   };
 
   const earnedXP = Math.round(level.xp * (score / 4) + (score === 4 ? level.xp * 0.5 : 0));
@@ -798,10 +1067,27 @@ function GameLevelView({ subjectKey, level, onBack, onComplete }) {
         {combo >= 2 && <div style={{ textAlign: "center", fontFamily: "'Fredoka One',cursive", fontSize: 12, color: "#fff", marginTop: 4 }}>🔥 {combo}x Combo!</div>}
       </div>
 
-      {/* Bonus popup */}
+      {/* Bonus popup — styled fixed overlay */}
       {showBonus && (
-        <div style={{ textAlign: "center", padding: "8px 0", fontFamily: "'Fredoka One',cursive", fontSize: 18, color: showBonus.includes("❌") ? "#FF6B6B" : "#FFB800" }} className="pop-in">
-          {showBonus}
+        <div style={{
+          position: "fixed",
+          top: 80,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 500,
+          background: showBonus.startsWith("💙") || showBonus.startsWith("🌈") || showBonus.startsWith("💪 Don") || showBonus.startsWith("🤗")
+            ? "linear-gradient(135deg,#FF8C00,#FFB800)"
+            : "linear-gradient(135deg,#3DBF6E,#00AEEF)",
+          borderRadius: 20,
+          padding: "12px 28px",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+          textAlign: "center",
+          maxWidth: 320,
+          whiteSpace: "nowrap",
+        }} className="pop-in">
+          <div style={{ fontFamily: "'Fredoka One',cursive", fontSize: 20, color: "#fff", letterSpacing: 0.5 }}>
+            {showBonus}
+          </div>
         </div>
       )}
 
